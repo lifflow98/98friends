@@ -1,0 +1,3278 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#07070F" id="theme-meta">
+<meta name="format-detection" content="telephone=yes">
+<title>Life Flow | 98 Friends | Blood Donation | Sooriyawewa</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=Nunito+Sans:wght@300;400;600;700;800&family=Noto+Sans+Sinhala:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- Firebase -->
+<script type="module">
+// ╔══════════════════════════════════════════════════════╗
+// ║  FIREBASE INIT & BRIDGE                               ║
+// ╚══════════════════════════════════════════════════════╝
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getFirestore, collection, doc, setDoc, getDoc, getDocs,
+  addDoc, deleteDoc, updateDoc, onSnapshot, query, orderBy, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBliWY3SWjPaSGKJhLSJZ2q0gddj79A698",
+  authDomain: "lifeflow-98friends.firebaseapp.com",
+  projectId: "lifeflow-98friends",
+  storageBucket: "lifeflow-98friends.firebasestorage.app",
+  messagingSenderId: "179058531778",
+  appId: "1:179058531778:web:1623d8e8d62ee3b576ca5b",
+  measurementId: "G-2CBPX2ZZHD"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ── Expose DB helpers to window so non-module scripts can call them ──
+window.db = db;
+window.fbCol = (name) => collection(db, name);
+window.fbDoc = (col, id) => id ? doc(db, col, id) : doc(collection(db, col));
+window.fbAdd = async (col, data) => {
+  data._ts = serverTimestamp();
+  const ref = await addDoc(collection(db, col), data);
+  return { ...data, id: ref.id };
+};
+window.fbSet = async (col, id, data) => {
+  await setDoc(doc(db, col, id), data, { merge: true });
+};
+window.fbDel = async (col, id) => {
+  await deleteDoc(doc(db, col, id));
+};
+window.fbGetAll = async (col) => {
+  const snap = await getDocs(collection(db, col));
+  return snap.docs.map(d => ({ ...d.data(), id: d.id }));
+};
+window.fbGetDoc = async (col, id) => {
+  const snap = await getDoc(doc(db, col, id));
+  return snap.exists() ? { ...snap.data(), id: snap.id } : null;
+};
+window.fbListen = (col, cb) => {
+  return onSnapshot(collection(db, col), snap => {
+    cb(snap.docs.map(d => ({ ...d.data(), id: d.id })));
+  });
+};
+
+// Signal that Firebase is ready
+window._fbReady = true;
+document.dispatchEvent(new Event('fb-ready'));
+console.log('✅ Firebase connected: lifeflow-98friends');
+
+// Connection indicator
+setTimeout(()=>{
+  if(window.showSyncStatus) window.showSyncStatus('🔥 Firebase connected — all devices sync!', true);
+}, 1500);
+</script>
+<style>
+/* ── TOKENS ─────────────────────────────────────────────── */
+:root{
+  --p:#DC143C;--pd:#8B0000;--pl:#FF4466;
+  --acc:#FFD700;--acc2:#FF8C00;
+  --bg:#07070F;--bg2:#0F0F1C;--bg3:#181828;--bg4:#1E1E30;
+  --card:rgba(255,255,255,0.04);--cb:rgba(220,20,60,0.22);
+  --txt:#F0EEF8;--txt2:#A8A8C4;--txt3:#606080;
+  --glass:rgba(7,7,15,0.82);
+  --r:14px;--r2:10px;--sh:0 8px 40px rgba(220,20,60,.18);
+  --nav:68px;
+}
+[data-theme=light]{
+  --bg:#FFF5F5;--bg2:#FFE8E8;--bg3:#FFDCDC;--bg4:#FFCFCF;
+  --card:rgba(255,255,255,.75);--cb:rgba(180,0,30,.18);
+  --txt:#1A0808;--txt2:#5A2030;--txt3:#8A4050;
+  --glass:rgba(255,245,245,.9);
+}
+*{margin:0;padding:0;box-sizing:border-box;scroll-behavior:smooth;}
+html{font-size:16px;-webkit-font-smoothing:antialiased;}
+body{font-family:'Nunito Sans','Noto Sans Sinhala',sans-serif;background:var(--bg);color:var(--txt);overflow-x:hidden;transition:background .3s,color .3s;}
+a{color:inherit;text-decoration:none;}
+img{max-width:100%;border-radius:var(--r);}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--p);border-radius:3px;}
+/* ── NAV ─────────────────────────────────────────── */
+#nav{position:fixed;top:0;left:0;right:0;height:var(--nav);z-index:800;background:var(--glass);backdrop-filter:blur(20px);border-bottom:1px solid var(--cb);display:flex;align-items:center;padding:0 28px;gap:14px;}
+.nav-logo{font-family:'Cinzel Decorative',serif;font-size:1.3rem;color:var(--p);display:flex;align-items:center;gap:9px;white-space:nowrap;flex-shrink:0;}
+.nav-logo svg{width:32px;height:32px;filter:drop-shadow(0 0 8px var(--p));}
+.nav-links{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap;}
+.nav-links a{font-size:.79rem;font-weight:700;padding:6px 12px;border-radius:30px;transition:all .22s;color:var(--txt2);letter-spacing:.03em;}
+.nav-links a:hover,.nav-links a.active{color:#fff;background:var(--p);}
+.nav-acts{display:flex;align-items:center;gap:9px;margin-left:14px;}
+.ham{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:var(--card);border:1px solid var(--cb);border-radius:8px;}
+.ham span{display:block;width:20px;height:2px;background:var(--txt);border-radius:2px;transition:all .28s;}
+.ham.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.ham.open span:nth-child(2){opacity:0;}
+.ham.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.mob-menu{position:fixed;top:var(--nav);left:0;right:0;background:var(--glass);backdrop-filter:blur(20px);border-bottom:1px solid var(--cb);z-index:799;padding:16px;display:none;flex-direction:column;gap:6px;}
+.mob-menu.open{display:flex;}
+.mob-menu a{padding:11px 16px;border-radius:10px;font-weight:700;font-size:.88rem;color:var(--txt2);transition:all .22s;display:block;}
+.mob-menu a:hover,.mob-menu a.active{color:#fff;background:var(--p);}
+@media(max-width:640px){.ham{display:flex;}}
+.nbtn{background:var(--card);border:1px solid var(--cb);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txt2);font-size:.85rem;transition:all .22s;flex-shrink:0;}
+.nbtn:hover{background:var(--p);color:#fff;border-color:var(--p);}
+.lbtn{background:var(--card);border:1px solid var(--cb);border-radius:20px;padding:5px 13px;font-size:.74rem;font-weight:800;cursor:pointer;color:var(--txt);letter-spacing:.06em;transition:all .22s;}
+.lbtn:hover{background:var(--p);color:#fff;}
+/* ── HERO ─────────────────────────────────────────── */
+#hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;padding-top:var(--nav);}
+#c3d{position:absolute;inset:0;width:100%;height:100%;z-index:0;}
+.hero-wrap{position:relative;z-index:2;text-align:center;padding:40px 20px;}
+.h-badge{display:inline-block;background:rgba(220,20,60,.12);border:1px solid rgba(220,20,60,.35);border-radius:40px;padding:6px 18px;font-size:.75rem;font-weight:700;color:#FF8C8C;letter-spacing:.12em;text-transform:uppercase;margin-bottom:22px;backdrop-filter:blur(10px);}
+.h-title{font-family:'Cinzel',serif;font-size:clamp(3.2rem,10vw,7.5rem);font-weight:900;line-height:.95;background:linear-gradient(135deg,#fff 0%,#ffb0b0 45%,var(--p) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:14px;filter:drop-shadow(0 0 40px rgba(220,20,60,.35));}
+.h-sub{font-size:clamp(.95rem,2.2vw,1.25rem);color:var(--txt2);margin-bottom:8px;font-weight:300;letter-spacing:.04em;}
+.h-org{font-size:clamp(.8rem,1.6vw,.95rem);color:var(--acc);font-weight:700;letter-spacing:.08em;margin-bottom:36px;}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:13px 28px;border-radius:50px;font-weight:700;font-size:.88rem;cursor:pointer;border:none;transition:all .28s;letter-spacing:.04em;font-family:inherit;}
+.btn-p{background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;box-shadow:0 4px 22px rgba(220,20,60,.4);}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(220,20,60,.6);}
+.btn-o{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.28);backdrop-filter:blur(10px);}
+.btn-o:hover{border-color:var(--p);background:rgba(220,20,60,.12);}
+.hero-stats{display:flex;gap:36px;justify-content:center;margin-top:54px;flex-wrap:wrap;}
+.hs{text-align:center;}
+.hs-n{font-family:'Cinzel',serif;font-size:2rem;font-weight:900;color:var(--p);display:block;}
+.hs-l{font-size:.72rem;color:var(--txt3);letter-spacing:.1em;text-transform:uppercase;}
+.scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);color:var(--txt3);font-size:.72rem;display:flex;flex-direction:column;align-items:center;gap:7px;animation:bou 2s infinite;}
+@keyframes bou{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-8px);}}
+/* ── SECTIONS ─────────────────────────────────────── */
+section{padding:90px 0;}
+.ctr{max-width:1200px;margin:0 auto;padding:0 22px;}
+.sh{text-align:center;margin-bottom:58px;}
+.stag{display:inline-block;background:rgba(220,20,60,.1);border:1px solid rgba(220,20,60,.28);border-radius:30px;padding:4px 14px;font-size:.7rem;font-weight:700;color:var(--p);letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;}
+.st{font-family:'Cinzel',serif;font-size:clamp(1.7rem,4vw,2.7rem);font-weight:700;margin-bottom:14px;line-height:1.2;}
+.sd{font-size:.95rem;color:var(--txt2);max-width:580px;margin:0 auto;line-height:1.7;}
+.ac{color:var(--p);}
+/* ── ABOUT ─────────────────────────────────────────── */
+#about{background:var(--bg2);}
+.ab-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;}
+.ab-vis{display:flex;justify-content:center;}
+.heart-anim{width:260px;height:260px;position:relative;}
+.heart-anim::before{content:'';position:absolute;inset:-18px;background:radial-gradient(circle,rgba(220,20,60,.18),transparent 70%);border-radius:50%;animation:pr 2s ease-in-out infinite;}
+@keyframes pr{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.12);opacity:.5;}}
+.hsvg{width:100%;height:100%;filter:drop-shadow(0 0 28px rgba(220,20,60,.55));animation:hb 1.3s ease-in-out infinite;}
+@keyframes hb{0%,100%{transform:scale(1);}15%{transform:scale(1.08);}30%{transform:scale(1);}45%{transform:scale(1.11);}65%{transform:scale(1);}}
+.ab-cards{display:flex;flex-direction:column;gap:22px;}
+.ab-card{background:var(--card);border:1px solid var(--cb);border-radius:var(--r);padding:22px;transition:transform .3s,box-shadow .3s;}
+.ab-card:hover{transform:translateY(-4px);box-shadow:var(--sh);}
+.ab-card-i{font-size:1.8rem;margin-bottom:10px;}
+.ab-card h3{font-family:'Cinzel',serif;font-size:1rem;margin-bottom:7px;color:var(--p);}
+.ab-card p{font-size:.88rem;color:var(--txt2);line-height:1.6;}
+/* ── BLOOD TYPES ──────────────────────────────────── */
+.bt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:14px;}
+.bt{background:var(--card);border:1px solid var(--cb);border-radius:var(--r);padding:18px;text-align:center;transition:all .28s;cursor:default;}
+.bt:hover{background:var(--p);border-color:var(--p);transform:translateY(-5px);box-shadow:0 8px 22px rgba(220,20,60,.38);}
+.bt-l{font-family:'Cinzel',serif;font-size:1.9rem;font-weight:900;color:var(--p);transition:color .28s;}
+.bt:hover .bt-l{color:#fff;}
+.bt-i{font-size:.68rem;color:var(--txt3);margin-top:5px;transition:color .28s;}
+.bt:hover .bt-i{color:rgba(255,255,255,.8);}
+/* ── EVENTS ─────────────────────────────────────────── */
+#events{background:var(--bg2);}
+.ev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:22px;}
+.ev-card{background:var(--card);border:1px solid var(--cb);border-radius:var(--r);overflow:hidden;transition:all .28s;}
+.ev-card:hover{transform:translateY(-5px);box-shadow:var(--sh);}
+.ev-top{background:linear-gradient(135deg,var(--pd),var(--p));padding:22px;position:relative;overflow:hidden;}
+.ev-top::after{content:'';position:absolute;right:-18px;top:-18px;width:90px;height:90px;background:rgba(255,255,255,.06);border-radius:50%;}
+.ev-db{background:rgba(255,255,255,.18);border-radius:8px;padding:7px 13px;display:inline-flex;flex-direction:column;align-items:center;margin-bottom:10px;}
+.ev-day{font-family:'Cinzel',serif;font-size:1.7rem;font-weight:900;color:#fff;line-height:1;}
+.ev-mon{font-size:.62rem;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.1em;}
+.ev-title{font-family:'Cinzel',serif;font-size:1.15rem;color:#fff;font-weight:700;}
+.ev-body{padding:18px;}
+.ev-meta{display:flex;flex-direction:column;gap:7px;margin-bottom:14px;}
+.ev-mr{display:flex;align-items:center;gap:7px;font-size:.81rem;color:var(--txt2);}
+.ev-gifts{border-top:1px solid var(--cb);padding-top:12px;margin-top:12px;}
+.ev-gt{font-size:.68rem;font-weight:700;color:var(--acc);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
+.gifts-row{display:flex;flex-wrap:wrap;gap:5px;}
+.gtag{background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.28);border-radius:20px;padding:3px 9px;font-size:.7rem;color:var(--acc);}
+.no-ev{text-align:center;color:var(--txt3);padding:50px;grid-column:1/-1;font-size:1rem;}
+/* ── PAST EVENTS ──────────────────────────────────── */
+.pe-list{display:flex;flex-direction:column;gap:24px;}
+.pe-card{background:var(--card);border:1px solid var(--cb);border-radius:var(--r);overflow:hidden;}
+.pe-hdr{background:var(--bg3);padding:18px 22px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background .22s;}
+.pe-hdr:hover{background:rgba(220,20,60,.08);}
+.pe-hdr-l{}
+.pe-hdr-t{font-family:'Cinzel',serif;font-size:1.1rem;font-weight:700;}
+.pe-hdr-m{font-size:.8rem;color:var(--txt3);margin-top:3px;}
+.pe-body{padding:22px;display:none;}
+.pe-body.open{display:block;}
+.mem-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:14px;}
+.mem-item{border-radius:var(--r2);overflow:hidden;aspect-ratio:1;cursor:pointer;}
+.mem-item img,.mem-item video{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
+.mem-item:hover img,.mem-item:hover video{transform:scale(1.06);}
+.pe-stats{display:flex;gap:20px;flex-wrap:wrap;margin-top:14px;}
+.pe-s{background:var(--bg3);border-radius:10px;padding:11px 18px;text-align:center;}
+.pe-s .n{font-family:'Cinzel',serif;font-size:1.4rem;color:var(--p);font-weight:700;}
+.pe-s .l{font-size:.68rem;color:var(--txt3);letter-spacing:.08em;text-transform:uppercase;}
+/* ── REGISTER ─────────────────────────────────────── */
+#register{background:var(--bg2);}
+.reg-wrap{max-width:660px;margin:0 auto;}
+.form-card{background:var(--card);border:1px solid var(--cb);border-radius:20px;padding:36px;backdrop-filter:blur(18px);}
+.fg{display:flex;flex-direction:column;gap:7px;}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.fg-full{grid-column:1/-1;}
+.fl{font-size:.8rem;font-weight:700;color:var(--txt2);letter-spacing:.04em;}
+.fi,.fs,.fta{background:var(--bg3);border:1px solid var(--cb);border-radius:var(--r2);padding:11px 15px;color:var(--txt);font-family:inherit;font-size:.9rem;transition:border-color .22s,box-shadow .22s;width:100%;}
+.fi:focus,.fs:focus,.fta:focus{outline:none;border-color:var(--p);box-shadow:0 0 0 3px rgba(220,20,60,.13);}
+.fs option{background:var(--bg3);}
+/* ── COMMENTS ─────────────────────────────────────── */
+.cm-wrap{max-width:740px;margin:0 auto;}
+.cm-form{background:var(--card);border:1px solid var(--cb);border-radius:var(--r);padding:26px;margin-bottom:32px;}
+.cm-list{display:flex;flex-direction:column;gap:14px;}
+.cm-item{background:var(--card);border:1px solid var(--cb);border-radius:var(--r);padding:18px;}
+.cm-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.cm-name{font-weight:700;color:var(--p);font-size:.87rem;}
+.cm-date{font-size:.72rem;color:var(--txt3);}
+.cm-text{color:var(--txt2);font-size:.88rem;line-height:1.6;}
+/* ── COMMITTEE ─────────────────────────────────────── */
+#committee{background:var(--bg2);}
+.oc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;}
+.oc-card{background:var(--card);border:1px solid var(--cb);border-radius:var(--r);padding:26px 18px;text-align:center;transition:all .28s;cursor:pointer;}
+.oc-card:hover{transform:translateY(-7px);box-shadow:var(--sh);border-color:var(--p);}
+.oc-ph{width:94px;height:94px;border-radius:50%;object-fit:cover;border:3px solid var(--p);margin:0 auto 14px;display:block;background:var(--bg3);}
+.oc-ph-p{width:94px;height:94px;border-radius:50%;background:var(--bg3);border:3px solid var(--cb);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;}
+.oc-nm{font-family:'Cinzel',serif;font-size:.95rem;font-weight:700;margin-bottom:5px;}
+.oc-rl{font-size:.74rem;color:var(--p);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;}
+.oc-yr{font-size:.77rem;color:var(--txt3);}
+/* ── CONTACT ──────────────────────────────────────── */
+.ct-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;}
+.ct-info{display:flex;flex-direction:column;gap:18px;}
+.ct-item{background:var(--card);border:1px solid var(--cb);border-radius:var(--r);padding:18px 22px;display:flex;align-items:center;gap:14px;transition:transform .22s;}
+.ct-item:hover{transform:translateX(5px);}
+.ct-ic{width:44px;height:44px;background:rgba(220,20,60,.13);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.ct-lb{font-size:.72rem;color:var(--txt3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px;}
+.ct-vl{font-weight:600;color:var(--txt);}
+/* ── FOOTER ───────────────────────────────────────── */
+footer{background:var(--bg3);border-top:1px solid var(--cb);padding:44px 0 22px;}
+.ft-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:36px;margin-bottom:36px;}
+.ft-logo{font-family:'Cinzel Decorative',serif;font-size:1.3rem;color:var(--p);margin-bottom:10px;}
+.ft-tag{font-size:.84rem;color:var(--txt3);line-height:1.6;}
+.ft-col h4{font-family:'Cinzel',serif;font-size:.86rem;color:var(--p);margin-bottom:14px;letter-spacing:.06em;}
+.ft-col ul{list-style:none;display:flex;flex-direction:column;gap:9px;}
+.ft-col ul li a{font-size:.82rem;color:var(--txt3);transition:color .22s;}
+.ft-col ul li a:hover{color:var(--p);}
+.ft-bot{border-top:1px solid var(--cb);padding-top:22px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.ft-cp{font-size:.76rem;color:var(--txt3);}
+/* ── MODALS ───────────────────────────────────────── */
+.ov{position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:18px;}
+.ov.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--cb);border-radius:20px;padding:32px;max-width:460px;width:100%;position:relative;max-height:90vh;overflow-y:auto;}
+.modal-wide{max-width:620px;}
+.mcl{position:absolute;top:14px;right:14px;background:var(--card);border:1px solid var(--cb);border-radius:50%;width:30px;height:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .22s;color:var(--txt);}
+.mcl:hover{background:var(--p);color:#fff;}
+.mt{font-family:'Cinzel',serif;font-size:1.3rem;color:var(--p);margin-bottom:22px;}
+/* ── LIGHTBOX ─────────────────────────────────────── */
+#lb{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.96);display:none;align-items:center;justify-content:center;}
+#lb.open{display:flex;}
+#lb img,#lb video{max-width:92vw;max-height:92vh;border-radius:12px;object-fit:contain;}
+#lbx{position:fixed;top:18px;right:22px;color:#fff;font-size:2rem;cursor:pointer;z-index:2001;}
+/* ── LOADING ──────────────────────────────────────── */
+#ls{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;transition:opacity .5s;}
+#ls.fo{opacity:0;pointer-events:none;}
+.ls-logo{font-family:'Cinzel Decorative',serif;font-size:2.2rem;color:var(--p);animation:pglow 1.4s ease-in-out infinite;}
+@keyframes pglow{0%,100%{filter:drop-shadow(0 0 8px var(--p));}50%{filter:drop-shadow(0 0 28px var(--p));}}
+.ls-bar{width:180px;height:3px;background:var(--bg3);border-radius:2px;overflow:hidden;}
+.ls-fill{height:100%;background:linear-gradient(90deg,var(--p),var(--acc));border-radius:2px;animation:lf 2.2s ease-in-out forwards;}
+@keyframes lf{0%{width:0%;}100%{width:100%;}}
+/* ── PARTICLES ────────────────────────────────────── */
+.ptc{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1;}
+.p{position:absolute;border-radius:50%;background:var(--p);opacity:.12;animation:fp linear infinite;}
+@keyframes fp{0%{transform:translateY(110vh) scale(0);}100%{transform:translateY(-100px) scale(1);}}
+/* ── REVEAL ───────────────────────────────────────── */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .65s,transform .65s;}
+.rv.vi{opacity:1;transform:translateY(0);}
+.rl{opacity:0;transform:translateX(-36px);transition:opacity .65s,transform .65s;}
+.rl.vi{opacity:1;transform:translateX(0);}
+.rr{opacity:0;transform:translateX(36px);transition:opacity .65s,transform .65s;}
+.rr.vi{opacity:1;transform:translateX(0);}
+.d1{transition-delay:.1s!important;}.d2{transition-delay:.2s!important;}.d3{transition-delay:.3s!important;}.d4{transition-delay:.4s!important;}
+/* ── ADMIN ────────────────────────────────────────── */
+#adm{position:fixed;inset:0;z-index:1000;display:none;background:var(--bg);flex-direction:column;}
+#adm.open{display:flex;}
+.adm-top{background:linear-gradient(135deg,#0a0015,#160008,var(--pd));border-bottom:1px solid var(--cb);padding:0 22px;height:62px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;box-shadow:0 2px 24px rgba(220,20,60,.25);}
+.adm-logo{font-family:'Cinzel',serif;font-size:1.15rem;color:var(--p);display:flex;align-items:center;gap:10px;}
+.adm-logo span{font-size:.7rem;color:var(--txt3);font-family:'Nunito Sans',sans-serif;font-weight:400;}
+/* Admin profile avatar in header */
+.adm-profile-wrap{display:flex;align-items:center;gap:10px;}
+.adm-avatar{width:38px;height:38px;border-radius:50%;border:2px solid var(--p);object-fit:cover;cursor:pointer;flex-shrink:0;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:1.1rem;overflow:hidden;transition:box-shadow .22s;}
+.adm-avatar:hover{box-shadow:0 0 0 3px rgba(220,20,60,.4);}
+.adm-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.adm-profile-name{font-size:.78rem;font-weight:700;color:var(--txt);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.adm-profile-role{font-size:.64rem;color:var(--txt3);}
+/* Profile Upload Zone */
+.prof-upload-zone{border:2px dashed var(--cb);border-radius:16px;padding:22px;text-align:center;cursor:pointer;transition:all .22s;background:var(--bg3);position:relative;overflow:hidden;}
+.prof-upload-zone:hover{border-color:var(--p);background:rgba(220,20,60,.04);}
+.prof-avatar-big{width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid var(--p);margin:0 auto 12px;display:block;background:var(--bg2);}
+.prof-avatar-placeholder{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--pd),var(--p));display:flex;align-items:center;justify-content:center;font-size:2.8rem;margin:0 auto 12px;border:3px solid var(--p);}
+.prof-change-lbl{font-size:.78rem;color:var(--txt3);margin-top:6px;}
+.adm-body{display:flex;flex:1;overflow:hidden;}
+.adm-sb{width:214px;background:linear-gradient(180deg,var(--bg2),var(--bg3));border-right:1px solid var(--cb);overflow-y:auto;flex-shrink:0;padding:12px 0;}
+.si{display:flex;align-items:center;gap:11px;padding:12px 18px;cursor:pointer;transition:all .2s;color:var(--txt3);font-size:.84rem;font-weight:600;border-left:3px solid transparent;border-radius:0 8px 8px 0;margin:1px 8px 1px 0;}
+.si:hover{background:rgba(220,20,60,.09);color:var(--txt);transform:translateX(2px);}
+.si.active{background:linear-gradient(135deg,rgba(220,20,60,.18),rgba(220,20,60,.08));color:var(--p);border-left-color:var(--p);box-shadow:inset 0 0 0 1px rgba(220,20,60,.12);}
+.si-ic{font-size:1.15rem;width:22px;text-align:center;flex-shrink:0;}
+.sdiv{height:1px;background:var(--cb);margin:8px 14px;}
+.adm-con{flex:1;overflow-y:auto;padding:28px;}
+.as{display:none;}
+.as.active{display:block;}
+.ast{font-family:'Cinzel',serif;font-size:1.45rem;font-weight:700;color:var(--p);margin-bottom:5px;}
+.asd{font-size:.83rem;color:var(--txt3);margin-bottom:24px;}
+.ag2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.ag3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.ag4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.sc{background:linear-gradient(135deg,var(--card),rgba(220,20,60,.04));border:1px solid var(--cb);border-radius:var(--r);padding:22px;text-align:center;transition:all .28s;}
+.sc:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(220,20,60,.14);border-color:rgba(220,20,60,.3);}
+.sc .n{font-family:'Cinzel',serif;font-size:2.2rem;font-weight:900;color:var(--p);}
+.sc .l{font-size:.75rem;color:var(--txt3);letter-spacing:.08em;text-transform:uppercase;margin-top:3px;}
+.ac2{background:var(--card);border:1px solid var(--cb);border-radius:var(--r);padding:22px;margin-bottom:18px;transition:box-shadow .22s;}
+.ac2:hover{box-shadow:0 4px 24px rgba(220,20,60,.08);}
+.ac2-t{font-family:'Cinzel',serif;font-size:.95rem;color:var(--p);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.afg{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.afg.full,.afg-full{grid-column:1/-1;}
+.al{font-size:.76rem;font-weight:700;color:var(--txt3);letter-spacing:.04em;text-transform:uppercase;margin-bottom:5px;}
+.ai,.asel,.ata{background:var(--bg3);border:1px solid var(--cb);border-radius:8px;padding:9px 13px;color:var(--txt);font-family:inherit;font-size:.86rem;transition:border-color .22s;width:100%;}
+.ai:focus,.asel:focus,.ata:focus{outline:none;border-color:var(--p);}
+.asel option{background:var(--bg3);}
+.ata{min-height:72px;resize:vertical;}
+.btn-sm{padding:7px 16px;font-size:.78rem;border-radius:28px;}
+.btn-d{background:#c00;color:#fff;}
+.btn-d:hover{background:#a00;}
+.btn-g{background:#1a7a40;color:#fff;}
+.btn-g:hover{background:#115c2e;}
+.btn-go{background:linear-gradient(135deg,#9a7000,var(--acc));color:#000;font-weight:800;}
+.btn-wa{background:#25D366;color:#fff;display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:50px;font-weight:700;font-size:.95rem;cursor:pointer;border:none;transition:all .28s;}
+.btn-wa:hover{background:#128C7E;transform:scale(1.04);}
+.atw{overflow-x:auto;border-radius:var(--r);border:1px solid var(--cb);}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:rgba(220,20,60,.14);}
+th{padding:11px 15px;text-align:left;font-size:.73rem;font-weight:700;color:var(--p);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;}
+td{padding:10px 15px;border-top:1px solid var(--cb);font-size:.82rem;color:var(--txt2);}
+tr:hover td{background:rgba(255,255,255,.02);}
+.bdg{display:inline-block;padding:2px 9px;border-radius:20px;font-size:.68rem;font-weight:700;}
+.bdg-r{background:rgba(220,20,60,.14);color:var(--p);}
+.bdg-g{background:rgba(100,200,100,.14);color:#60C060;}
+.bdg-y{background:rgba(220,180,0,.14);color:#C0A000;}
+.exp-row{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px;align-items:center;}
+.srch{background:var(--bg3);border:1px solid var(--cb);border-radius:8px;padding:8px 14px;color:var(--txt);font-family:inherit;font-size:.85rem;width:240px;}
+.srch:focus{outline:none;border-color:var(--p);}
+.tab-r{display:flex;gap:3px;border-bottom:2px solid var(--cb);margin-bottom:22px;}
+.tb{padding:9px 18px;font-size:.82rem;font-weight:700;cursor:pointer;background:none;border:none;color:var(--txt3);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .22s;font-family:inherit;}
+.tb.active{color:var(--p);border-bottom-color:var(--p);}
+.yr-grp{margin-bottom:24px;}
+.yr-grp-hdr{font-family:'Cinzel',serif;font-size:1rem;color:var(--acc);margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+.yr-grp-hdr::after{content:'';flex:1;height:1px;background:var(--cb);}
+.gift-ai{background:rgba(255,215,0,.09);border:1px solid rgba(255,215,0,.28);border-radius:20px;padding:4px 11px;font-size:.75rem;color:var(--acc);display:flex;align-items:center;gap:5px;}
+.gift-rm{cursor:pointer;color:var(--txt3);font-size:.88rem;}
+.gift-rm:hover{color:#ff4444;}
+.gifts-al{display:flex;flex-wrap:wrap;gap:7px;margin-top:7px;}
+.sm-log-row{background:var(--bg3);border-radius:10px;padding:13px 16px;margin-bottom:7px;border:1px solid var(--cb);}
+.bud-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--cb);}
+.bud-row:last-child{border-bottom:none;}
+.bud-tot{background:linear-gradient(135deg,rgba(220,20,60,.12),rgba(220,20,60,.06));border-radius:12px;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;margin-top:14px;border:1px solid rgba(220,20,60,.22);}
+/* Export button groups */
+.exp-group{display:flex;flex-direction:column;gap:8px;background:var(--bg3);border-radius:12px;padding:14px;border:1px solid var(--cb);}
+.exp-group-lbl{font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--txt3);margin-bottom:4px;}
+.exp-group-inc{border-left:3px solid #22c55e;}
+.exp-group-exp{border-left:3px solid var(--p);}
+.exp-group-all{border-left:3px solid var(--acc);}
+.exp-btns-row{display:flex;gap:7px;flex-wrap:wrap;}
+.btn-xlsx{background:linear-gradient(135deg,#166534,#15803d);color:#fff;display:inline-flex;align-items:center;gap:5px;}
+.btn-xlsx:hover{background:linear-gradient(135deg,#14532d,#166534);transform:translateY(-1px);}
+.btn-pdf-inc{background:linear-gradient(135deg,#14532d,#15803d);color:#fff;display:inline-flex;align-items:center;gap:5px;}
+.btn-pdf-inc:hover{transform:translateY(-1px);}
+.btn-pdf-exp{background:linear-gradient(135deg,#7f1d1d,#dc2626);color:#fff;display:inline-flex;align-items:center;gap:5px;}
+.btn-pdf-exp:hover{transform:translateY(-1px);}
+.btn-pdf-all{background:linear-gradient(135deg,#78350f,#d97706);color:#fff;display:inline-flex;align-items:center;gap:5px;}
+.btn-pdf-all:hover{transform:translateY(-1px);}
+.btn-xlsx-exp{background:linear-gradient(135deg,#7f1d1d,#b91c1c);color:#fff;display:inline-flex;align-items:center;gap:5px;}
+.btn-xlsx-exp:hover{transform:translateY(-1px);}
+.btn-xlsx-all{background:linear-gradient(135deg,#78350f,#92400e);color:#fff;display:inline-flex;align-items:center;gap:5px;}
+.btn-xlsx-all:hover{transform:translateY(-1px);}
+.s-row{display:flex;align-items:center;justify-content:space-between;padding:15px 0;border-bottom:1px solid var(--cb);}
+.s-row:last-child{border-bottom:none;}
+.toggle{position:relative;width:42px;height:22px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.tsl{position:absolute;cursor:pointer;inset:0;background:var(--bg3);border-radius:22px;transition:.3s;border:1px solid var(--cb);}
+.tsl:before{content:'';position:absolute;height:16px;width:16px;left:2px;bottom:2px;background:var(--txt3);border-radius:50%;transition:.3s;}
+input:checked+.tsl{background:var(--p);}
+input:checked+.tsl:before{transform:translateX(20px);background:#fff;}
+.ph-prev{width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--p);display:none;}
+.mt8{margin-top:8px;}.mt16{margin-top:16px;}.mt24{margin-top:24px;}.mb16{margin-bottom:16px;}.mb8{margin-bottom:8px;}
+.w100{width:100%;}.tc{text-align:center;}.fs-sm{font-size:.84rem;}.txt3{color:var(--txt3);}.txt2{color:var(--txt2);}
+.notif-setup{background:rgba(220,20,60,.06);border:1px solid rgba(220,20,60,.2);border-radius:12px;padding:18px;margin-bottom:18px;}
+.notif-setup h4{color:var(--p);font-size:.9rem;font-weight:700;margin-bottom:8px;}
+.notif-setup p{font-size:.8rem;color:var(--txt3);line-height:1.6;}
+.sms-prog{background:var(--bg3);border-radius:10px;padding:14px;margin-top:14px;display:none;}
+.prog-bar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;margin:8px 0;}
+.prog-fill{height:100%;background:var(--p);border-radius:2px;transition:width .3s;}
+/* Sort headers */
+th.srt{cursor:pointer;user-select:none;white-space:nowrap;}
+th.srt:hover{color:#fff;background:rgba(220,20,60,.22);}
+th.srt::after{content:' ⇅';opacity:.4;font-size:.7em;}
+th.srt.sa::after{content:' ▲';opacity:1;color:var(--acc);}
+th.srt.sd::after{content:' ▼';opacity:1;color:var(--acc);}
+/* 3-col admin form grid */
+.afg3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+/* Memory thumbnail with delete */
+.mem-wrap{position:relative;display:inline-block;}
+.mem-del{position:absolute;top:3px;right:3px;background:rgba(180,0,0,.9);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:.72rem;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;padding:0;line-height:1;z-index:2;}
+.mem-wrap:hover .mem-del,.mem-wrap:focus-within .mem-del{opacity:1;}
+@media(hover:none){.mem-del{opacity:.8;}}
+/* WhatsApp SMS btn */
+.btn-wa2{background:#25D366;color:#fff;border:none;border-radius:28px;padding:7px 16px;font-size:.78rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .25s;}
+.btn-wa2:hover{background:#128C7E;}
+/* ── RESPONSIVE + MOBILE + iOS ────────────────────────── */
+/* Tablet */
+@media(max-width:1024px){
+  .ctr{padding:0 16px;}
+  section{padding:72px 0;}
+  .adm-sb{width:180px;}
+  .ag4{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:900px){
+  .ab-grid,.ct-grid,.ft-grid{grid-template-columns:1fr;}
+  .ag4,.ag3{grid-template-columns:1fr 1fr;}
+  .adm-sb{width:170px;}
+  .hero-stats{gap:24px;}
+  .oc-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));}
+  .ev-grid{grid-template-columns:1fr;}
+  .bt-grid{grid-template-columns:repeat(4,1fr);}
+}
+/* Mobile */
+@media(max-width:640px){
+  :root{--nav:60px;}
+  /* NAV */
+  .nav-links{display:none;}
+  .nav-logo{font-size:1.1rem;}
+  #nav{padding:0 16px;gap:10px;}
+  /* HERO */
+  .hero-wrap{padding:28px 16px;}
+  .hero-btns{gap:10px;}
+  .btn{padding:11px 20px;font-size:.84rem;}
+  .hero-stats{gap:18px;}
+  .hs-n{font-size:1.6rem;}
+  /* SECTIONS */
+  section{padding:56px 0;}
+  .sh{margin-bottom:40px;}
+  .st{font-size:clamp(1.5rem,6vw,2.2rem);}
+  /* GRIDS */
+  .ag4,.ag3,.ag2{grid-template-columns:1fr;}
+  .fg2{grid-template-columns:1fr;}
+  .afg{grid-template-columns:1fr;}
+  /* BLOOD TYPES */
+  .bt-grid{grid-template-columns:repeat(4,1fr);gap:8px;}
+  .bt{padding:12px 8px;}
+  .bt-l{font-size:1.5rem;}
+  /* ABOUT */
+  .ab-vis{display:none;}
+  /* EVENTS */
+  .ev-grid{grid-template-columns:1fr;}
+  /* COMMITTEE */
+  .oc-grid{grid-template-columns:repeat(2,1fr);}
+  /* FORM */
+  .form-card{padding:22px 16px;}
+  /* COMMENTS */
+  .cm-form{padding:18px 14px;}
+  /* FOOTER */
+  .ft-grid{grid-template-columns:1fr;gap:24px;}
+  .ft-col{display:none;}
+  /* MODALS */
+  .ov{padding:12px;}
+  .modal{padding:24px 16px;max-width:100%!important;border-radius:16px;}
+  .modal-wide{max-width:100%!important;}
+  /* ADMIN */
+  #adm{flex-direction:column;}
+  .adm-body{flex-direction:column;}
+  .adm-sb{width:100%;height:auto;display:flex;flex-wrap:nowrap;overflow-x:auto;border-right:none;border-bottom:1px solid var(--cb);padding:6px 8px;gap:4px;flex-shrink:0;}
+  .si{flex-direction:column;padding:8px 10px;border-left:none!important;border-bottom:3px solid transparent;min-width:52px;text-align:center;border-radius:8px;font-size:.7rem;gap:2px;}
+  .si.active{border-bottom-color:var(--p);border-left-color:transparent!important;}
+  .si-ic{font-size:1.1rem;width:auto;}
+  .si span:last-child{font-size:.62rem;display:block!important;}
+  .adm-con{padding:16px 12px;}
+  .sdiv{display:none;}
+  .adm-top{padding:0 12px;height:50px;}
+  .adm-logo{font-size:.95rem;}
+  .adm-logo span{display:none;}
+  .ast{font-size:1.2rem;}
+  .ac2{padding:16px;}
+  .atw{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  table{min-width:600px;}
+  .exp-row{gap:6px;}
+  .s-row{flex-direction:column;align-items:flex-start;gap:8px;}
+  .s-row input{width:100%!important;}
+  .ag4,.ag3{grid-template-columns:1fr 1fr;}
+  /* SETTINGS INPUTS */
+  .ai,.asel,.ata{font-size:16px;} /* prevent iOS zoom on focus */
+  .fi,.fs,.fta{font-size:16px;}  /* prevent iOS zoom on focus */
+  .afg3{grid-template-columns:1fr 1fr;}
+}
+/* iPhone SE / very small */
+@media(max-width:375px){
+  .hs-n{font-size:1.4rem;}
+  .bt-grid{grid-template-columns:repeat(4,1fr);}
+  .oc-grid{grid-template-columns:repeat(2,1fr);}
+}
+/* iOS Safari specific */
+@supports(-webkit-touch-callout:none){
+  body{-webkit-overflow-scrolling:touch;}
+  .modal{-webkit-overflow-scrolling:touch;}
+  .adm-con{-webkit-overflow-scrolling:touch;}
+  /* Fix iOS input shadows */
+  .fi,.fs,.fta,.ai,.asel,.ata{
+    -webkit-appearance:none;
+    border-radius:var(--r2);
+  }
+  /* Fix iOS button appearance */
+  .btn,.btn-p,.btn-o,.btn-sm,.btn-wa,.btn-d,.btn-g,.btn-go{
+    -webkit-appearance:none;
+    cursor:pointer;
+  }
+  /* Fix position fixed on iOS */
+  #nav,#ls,#lb,#adm,.ov{
+    -webkit-backface-visibility:hidden;
+    backface-visibility:hidden;
+  }
+}
+/* Touch devices — larger tap targets */
+@media(hover:none) and (pointer:coarse){
+  .btn,.btn-sm,.lbtn,.nbtn,.si,.mcl,.tb{min-height:44px;display:flex;align-items:center;justify-content:center;}
+  .btn-sm{min-height:38px;}
+  .fi,.fs,.fta,.ai,.asel,.ata{min-height:44px;padding:11px 15px;}
+  .nav-links a{min-height:38px;display:flex;align-items:center;}
+}
+</style>
+</head>
+<body>
+<!-- LOADING -->
+<div id="ls">
+  <div class="ls-logo">♥ Life Flow</div>
+  <div class="ls-bar"><div class="ls-fill"></div></div>
+  <div style="font-size:.76rem;color:var(--txt3);letter-spacing:.14em;">98 FRIENDS · SOORIYAWEWA · SRI LANKA</div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo">
+    <svg viewBox="0 0 40 40"><path d="M20 34S4 24 4 14a8 8 0 0116 0 8 8 0 0116 0c0 10-16 20-16 20z" fill="var(--p)"/><path d="M13 18h4l2-4 2 8 2-4h4" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span data-t="site_name">Life Flow</span>
+  </div>
+  <div class="nav-links">
+    <a href="#hero" data-t="n_home">Home</a>
+    <a href="#about" data-t="n_about">About</a>
+    <a href="#events" data-t="n_events">Events</a>
+    <a href="#register" data-t="n_reg">Register</a>
+    <a href="#gallery" data-t="n_gallery">Gallery</a>
+    <a href="#committee" data-t="n_oc">Committee</a>
+    <a href="#contact" data-t="n_contact">Contact</a>
+  </div>
+  <div class="nav-acts">
+    <button class="lbtn" onclick="toggleLang()" id="lbtn">සිං</button>
+    <button class="nbtn" onclick="toggleTheme()" id="thbtn" title="Toggle theme">🌙</button>
+    <button class="nbtn" onclick="openAdminLogin()" title="Admin" style="font-size:.72rem;font-weight:800;color:var(--p);">ADM</button>
+    <div class="ham" id="ham" onclick="toggleMobMenu()"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+<!-- Mobile Menu -->
+<div class="mob-menu" id="mob-menu">
+  <a href="#hero" onclick="closeMobMenu()" data-t="n_home">🏠 Home</a>
+  <a href="#about" onclick="closeMobMenu()" data-t="n_about">ℹ️ About</a>
+  <a href="#events" onclick="closeMobMenu()" data-t="n_events">📅 Events</a>
+  <a href="#register" onclick="closeMobMenu()" data-t="n_reg">🩸 Register</a>
+  <a href="#gallery" onclick="closeMobMenu()" data-t="n_gallery">🖼️ Gallery</a>
+  <a href="#committee" onclick="closeMobMenu()" data-t="n_oc">👥 Committee</a>
+  <a href="#contact" onclick="closeMobMenu()" data-t="n_contact">📞 Contact</a>
+  <a href="#comments" onclick="closeMobMenu()">💬 Comments</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <canvas id="c3d"></canvas>
+  <div class="ptc" id="ptc"></div>
+  <div class="hero-wrap">
+    <div class="h-badge" data-t="h_badge">🩸 Blood Donation Drive · Sooriyawewa, Sri Lanka</div>
+    <h1 class="h-title" data-t="h_title">Life Flow</h1>
+    <p class="h-sub" data-t="h_sub">Donate Blood. Save Lives. Be a Hero.</p>
+    <p class="h-org" data-t="h_org">✦ Organized by 98 Friends ✦ Sooriyawewa, Sri Lanka ✦</p>
+    <div class="hero-btns">
+      <a href="#register" class="btn btn-p" data-t="h_reg_btn">🩸 Register to Donate</a>
+      <a href="#events" class="btn btn-o" data-t="h_ev_btn">📅 View Events</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hs"><span class="hs-n" id="st-donors">0</span><span class="hs-l" data-t="st_donors">Donors</span></div>
+      <div class="hs"><span class="hs-n" id="st-events">0</span><span class="hs-l" data-t="st_events">Events</span></div>
+      <div class="hs"><span class="hs-n" id="st-lives">0</span><span class="hs-l" data-t="st_lives">Lives Saved</span></div>
+      <div class="hs"><span class="hs-n">98</span><span class="hs-l" data-t="st_friends">Friends</span></div>
+    </div>
+  </div>
+  <div class="scroll-hint"><span data-t="scroll">Scroll to explore</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="ctr">
+    <div class="ab-grid">
+      <div class="ab-vis rl">
+        <div class="heart-anim">
+          <svg class="hsvg" viewBox="0 0 100 90"><path d="M50 80S5 50 5 25a22 22 0 0145 0 22 22 0 0145 0c0 25-45 55-45 55z" fill="url(#hg)"/><defs><linearGradient id="hg" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#FF6B6B"/><stop offset="100%" stop-color="#8B0000"/></linearGradient></defs><path d="M33 36h8l4-8 4 16 4-8h8" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/></svg>
+        </div>
+      </div>
+      <div class="ab-cards rr">
+        <div class="sh" style="text-align:left;margin-bottom:28px;">
+          <div class="stag" data-t="ab_tag">About Us</div>
+          <h2 class="st" data-t="ab_title">Why <span class="ac">Life Flow</span> Matters</h2>
+          <p class="sd" style="margin:0;" data-t="ab_desc">Life Flow is a community blood donation initiative by 98 Friends — passionate volunteers from Sooriyawewa dedicated to saving lives.</p>
+        </div>
+        <div class="ab-card"><div class="ab-card-i">🎯</div><h3 data-t="ab_m_t">Our Mission</h3><p data-t="ab_m_d">Build a sustainable blood donation ecosystem in Sooriyawewa — ensuring no patient ever suffers from blood shortages.</p></div>
+        <div class="ab-card"><div class="ab-card-i">🤝</div><h3 data-t="ab_v_t">98 Friends Community</h3><p data-t="ab_v_d">98 passionate friends united by one belief: every drop of donated blood gives another life a second chance.</p></div>
+        <div class="ab-card"><div class="ab-card-i">📍</div><h3 data-t="ab_l_t">Location</h3><p data-t="ab_l_d">Sooriyawewa, Southern Province, Sri Lanka. Serving local hospitals and health centers with regular drives.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOOD TYPES -->
+<section id="blood-types">
+  <div class="ctr">
+    <div class="sh rv">
+      <div class="stag" data-t="bt_tag">Blood Types</div>
+      <h2 class="st" data-t="bt_title">All Blood Types <span class="ac">Welcome</span></h2>
+      <p class="sd" data-t="bt_desc">Every blood type is precious. All groups are needed and valued.</p>
+    </div>
+    <div class="bt-grid rv">
+      <div class="bt"><div class="bt-l">A+</div><div class="bt-i" data-t="bt_mc">Most Common</div></div>
+      <div class="bt"><div class="bt-l">A−</div><div class="bt-i" data-t="bt_r">Rare</div></div>
+      <div class="bt"><div class="bt-l">B+</div><div class="bt-i" data-t="bt_c">Common</div></div>
+      <div class="bt"><div class="bt-l">B−</div><div class="bt-i" data-t="bt_r">Rare</div></div>
+      <div class="bt"><div class="bt-l">AB+</div><div class="bt-i" data-t="bt_ur">Universal Recipient</div></div>
+      <div class="bt"><div class="bt-l">AB−</div><div class="bt-i" data-t="bt_vr">Very Rare</div></div>
+      <div class="bt"><div class="bt-l">O+</div><div class="bt-i" data-t="bt_c">Common</div></div>
+      <div class="bt"><div class="bt-l">O−</div><div class="bt-i" data-t="bt_ud">Universal Donor</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- EVENTS -->
+<section id="events">
+  <div class="ctr">
+    <div class="sh rv">
+      <div class="stag" data-t="ev_tag">Events</div>
+      <h2 class="st" data-t="ev_title">Upcoming <span class="ac">Blood Drives</span></h2>
+      <p class="sd" data-t="ev_desc">Join our upcoming events. Gifts await our dedicated donors!</p>
+    </div>
+    <div class="ev-grid rv" id="ev-grid"><div class="no-ev" data-t="no_ev">No upcoming events yet. Check back soon!</div></div>
+  </div>
+</section>
+
+<!-- PAST EVENTS / GALLERY -->
+<section id="gallery" style="background:var(--bg2);">
+  <div class="ctr">
+    <div class="sh rv">
+      <div class="stag" data-t="gal_tag">Memories</div>
+      <h2 class="st" data-t="gal_title">Our <span class="ac">Past Events</span></h2>
+      <p class="sd" data-t="gal_desc">Relive moments that changed lives.</p>
+    </div>
+    <div class="pe-list rv" id="pe-list"><div class="no-ev" data-t="no_pe">Our story is just beginning!</div></div>
+  </div>
+</section>
+
+<!-- REGISTER -->
+<section id="register">
+  <div class="ctr">
+    <div class="sh rv">
+      <div class="stag" data-t="reg_tag">Register</div>
+      <h2 class="st" data-t="reg_title">Become a <span class="ac">Donor</span></h2>
+      <p class="sd" data-t="reg_desc">Join our lifesaving community. You'll be invited to our WhatsApp group after registration.</p>
+    </div>
+    <div class="reg-wrap rv">
+      <div class="form-card">
+        <form id="reg-form" onsubmit="submitReg(event)">
+          <div class="fg2">
+            <div class="fg fg-full"><label class="fl" data-t="rf_name">Full Name</label><input class="fi" name="fullName" required placeholder="Your full name"></div>
+            <div class="fg"><label class="fl" data-t="rf_email">Email Address</label><input class="fi" name="email" type="email" required placeholder="your@email.com"></div>
+            <div class="fg"><label class="fl" data-t="rf_sex">Sex</label><select class="fs" name="sex" required><option value="" data-t="rf_sel">Select...</option><option value="Male" data-t="rf_male">Male</option><option value="Female" data-t="rf_female">Female</option><option value="Other" data-t="rf_other">Other</option></select></div>
+            <div class="fg"><label class="fl" data-t="rf_contact">Contact Number</label><input class="fi" name="contactNumber" required placeholder="+94 77 XXX XXXX"></div>
+            <div class="fg"><label class="fl" data-t="rf_wa">WhatsApp Number</label><input class="fi" name="whatsappNumber" required placeholder="+94 77 XXX XXXX"></div>
+            <div class="fg fg-full"><label class="fl" data-t="rf_addr">Address</label><input class="fi" name="address" required placeholder="Your full address"></div>
+            <div class="fg"><label class="fl" data-t="rf_nic">NIC Number</label><input class="fi" name="nic" required placeholder="XXXXXXXXX V / XXXXXXXXXXXX"></div>
+            <div class="fg"><label class="fl" data-t="rf_wt">Weight (kg)</label><input class="fi" name="weight" type="number" min="45" required placeholder="e.g. 65"></div>
+            <div class="fg"><label class="fl" data-t="rf_bt">Blood Type</label><select class="fs" name="bloodType" required><option value="">Select blood type...</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+            <div class="fg"><label class="fl" data-t="rf_date">Registration Date</label><input class="fi" name="regDate" type="date" required id="reg-date"></div>
+          </div>
+          <button type="submit" class="btn btn-p w100 mt16" style="justify-content:center;" data-t="rf_submit">🩸 Complete Registration</button>
+          <p style="text-align:center;font-size:.76rem;color:var(--txt3);margin-top:10px;" data-t="rf_note">By registering you agree to be contacted for donation drives. You'll be added to our WhatsApp group.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMENTS -->
+<section id="comments" style="background:var(--bg2);">
+  <div class="ctr">
+    <div class="sh rv"><div class="stag" data-t="cm_tag">Community</div><h2 class="st" data-t="cm_title">Leave a <span class="ac">Comment</span></h2></div>
+    <div class="cm-wrap rv">
+      <div class="cm-form">
+        <h3 style="font-family:'Cinzel',serif;font-size:1rem;color:var(--p);margin-bottom:18px;" data-t="cm_ft">💬 Share Your Thoughts</h3>
+        <div class="fg2" style="gap:14px;margin-bottom:14px;">
+          <div class="fg"><label class="fl" data-t="cm_name">Your Name</label><input class="fi" id="cm-name" placeholder="Your name"></div>
+          <div class="fg"><label class="fl" data-t="cm_bt">Blood Type (optional)</label><select class="fs" id="cm-bt"><option value="">—</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+        </div>
+        <div class="fg" style="margin-bottom:14px;"><label class="fl" data-t="cm_txt">Comment</label><textarea class="fta fi" id="cm-txt" placeholder="Share your experience..." style="min-height:80px;" onkeypress="if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){submitComment();}"></textarea></div>
+        <button class="btn btn-p btn-sm" onclick="submitComment()" data-t="cm_sub">Post Comment</button>
+        <span style="font-size:.72rem;color:var(--txt3);margin-left:10px;">Ctrl+Enter to submit</span>
+      </div>
+      <div class="cm-list" id="cm-list"></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMITTEE -->
+<section id="committee">
+  <div class="ctr">
+    <div class="sh rv"><div class="stag" data-t="oc_tag">Our Team</div><h2 class="st" data-t="oc_title">Organizing <span class="ac">Committee</span></h2><p class="sd" data-t="oc_desc">Meet the 98 Friends who make Life Flow possible.</p></div>
+    <div class="oc-grid rv" id="oc-grid"><div class="no-ev" style="grid-column:1/-1;" data-t="no_oc">Committee members will appear here.</div></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" style="background:var(--bg2);">
+  <div class="ctr">
+    <div class="sh rv"><div class="stag" data-t="ct_tag">Contact</div><h2 class="st" data-t="ct_title">Get in <span class="ac">Touch</span></h2></div>
+    <div class="ct-grid rv">
+      <div class="ct-info">
+        <div class="ct-item"><div class="ct-ic">📞</div><div><div class="ct-lb" data-t="ct_ph">Phone</div><div class="ct-vl">0772628991</div></div></div>
+        <div class="ct-item"><div class="ct-ic">📧</div><div><div class="ct-lb" data-t="ct_em">Email</div><div class="ct-vl" style="word-break:break-all;">mudushkasuraj1982@gmail.com</div></div></div>
+        <div class="ct-item"><div class="ct-ic">📍</div><div><div class="ct-lb" data-t="ct_loc">Location</div><div class="ct-vl" data-t="ct_place">Sooriyawewa, Southern Province, Sri Lanka</div></div></div>
+        <div class="ct-item"><div class="ct-ic">🏢</div><div><div class="ct-lb" data-t="ct_org">Organization</div><div class="ct-vl" data-t="ct_oname">98 Friends · Life Flow Blood Donation</div></div></div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--cb);border-radius:var(--r);padding:22px;">
+        <h3 style="font-family:'Cinzel',serif;font-size:.95rem;color:var(--p);margin-bottom:14px;" data-t="ct_find">Find Us</h3>
+        <div style="background:var(--bg3);border-radius:10px;height:180px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--txt3);">
+          <div style="font-size:2.5rem;">🗺️</div>
+          <div data-t="ct_map">Sooriyawewa, Sri Lanka</div>
+          <a href="https://maps.google.com/?q=Sooriyawewa,Sri+Lanka" target="_blank" class="btn btn-o btn-sm" style="margin-top:6px;" data-t="ct_map_btn">Open in Maps</a>
+        </div>
+        <p style="font-size:.82rem;color:var(--txt2);line-height:1.6;margin-top:16px;" data-t="ct_note">We welcome all blood group donors. Contact us for more information about upcoming drives and registration.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ctr">
+    <div class="ft-grid">
+      <div><div class="ft-logo">♥ Life Flow</div><p class="ft-tag" data-t="ft_tag">Organized by 98 Friends, Sooriyawewa, Sri Lanka.<br>Saving lives one drop at a time.</p><div style="font-size:.78rem;color:var(--txt3);margin-top:12px;">📞 0772628991 &nbsp;|&nbsp; 📧 mudushkasuraj1982@gmail.com</div></div>
+      <div class="ft-col"><h4 data-t="ft_ql">Quick Links</h4><ul><li><a href="#hero" data-t="n_home">Home</a></li><li><a href="#about" data-t="n_about">About</a></li><li><a href="#events" data-t="n_events">Events</a></li><li><a href="#register" data-t="n_reg">Register</a></li></ul></div>
+      <div class="ft-col"><h4 data-t="ft_more">More</h4><ul><li><a href="#gallery" data-t="n_gallery">Gallery</a></li><li><a href="#committee" data-t="n_oc">Committee</a></li><li><a href="#contact" data-t="n_contact">Contact</a></li><li><a href="#comments">Comments</a></li></ul></div>
+    </div>
+    <div class="ft-bot"><div class="ft-cp" data-t="ft_cp">© 2024 Life Flow · 98 Friends · Sooriyawewa, Sri Lanka. All Rights Reserved.</div><div style="font-size:.78rem;color:var(--p);">🩸 Donate Blood · Save Lives</div></div>
+  </div>
+</footer>
+
+<!-- ═══ MODALS ═══ -->
+<!-- WhatsApp Success -->
+<div class="ov" id="wa-modal">
+  <div class="modal" style="text-align:center;">
+    <button class="mcl" onclick="closeModal('wa-modal')">✕</button>
+    <div style="font-size:3.5rem;margin-bottom:14px;">🎉</div>
+    <h2 class="mt" data-t="wa_t">Registration Successful!</h2>
+    <p style="color:var(--txt2);line-height:1.7;margin-bottom:22px;" data-t="wa_d">Thank you for registering as a Life Flow blood donor! Join our WhatsApp group to stay updated on events.</p>
+    <button class="btn-wa" id="wa-btn" onclick="joinWA()"><span style="font-size:1.3rem;">💬</span><span data-t="wa_join">Join WhatsApp Group</span></button>
+    <p style="font-size:.76rem;color:var(--txt3);margin-top:16px;" data-t="wa_sms">📱 You will receive an SMS confirmation shortly.</p>
+  </div>
+</div>
+
+<!-- Admin Login -->
+<div class="ov" id="adm-login-ov">
+  <div class="modal" style="max-width:360px;">
+    <button class="mcl" onclick="closeModal('adm-login-ov')">✕</button>
+    <h2 class="mt">🔐 Admin Login</h2>
+    <div class="fg" style="margin-bottom:18px;"><label class="fl">Password</label><input class="fi" type="password" id="adm-pw" placeholder="Enter admin password" onkeypress="if(event.key==='Enter')adminLogin()"></div>
+    <button class="btn btn-p w100" onclick="adminLogin()" style="justify-content:center;">Login</button>
+    <p id="adm-err" style="color:#ff4444;font-size:.78rem;text-align:center;margin-top:10px;display:none;">Incorrect password.</p>
+  </div>
+</div>
+
+<!-- Event Register Modal -->
+<div class="ov" id="ev-reg-ov">
+  <div class="modal modal-wide" style="max-width:580px;">
+    <button class="mcl" onclick="closeModal('ev-reg-ov')">✕</button>
+    <h2 class="mt" id="ev-reg-title">Register for Event</h2>
+    <input type="hidden" id="ev-reg-eid">
+
+    <!-- STEP 1: Auto-fill lookup -->
+    <div style="background:rgba(220,20,60,.07);border:1px solid rgba(220,20,60,.25);border-radius:12px;padding:16px;margin-bottom:18px;">
+      <div style="font-size:.84rem;font-weight:700;color:var(--p);margin-bottom:4px;">💡 Already a registered donor?</div>
+      <div style="font-size:.78rem;color:var(--txt3);margin-bottom:12px;">Enter your <strong>Phone Number</strong> or <strong>NIC Number</strong> to auto-fill your details instantly.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <input class="fi" id="evr-lookup" placeholder="Phone number (e.g. 0771234567) or NIC number" style="flex:1;min-width:200px;" type="text">
+        <button class="btn btn-p btn-sm" onclick="evRegAutoFill()" type="button" style="white-space:nowrap;">🔍 Find &amp; Fill</button>
+      </div>
+      <div id="evr-lookup-msg" style="font-size:.78rem;margin-top:8px;display:none;"></div>
+    </div>
+
+    <!-- Autofill success notice -->
+    <div id="evr-autofill-notice" style="display:none;background:rgba(37,211,102,.09);border:1px solid rgba(37,211,102,.3);border-radius:10px;padding:11px 15px;margin-bottom:16px;font-size:.82rem;color:#25D366;">
+      ✅ <strong>Donor found!</strong> Your details have been filled in. Review and confirm below.
+    </div>
+
+    <!-- STEP 2: Full form -->
+    <div class="fg2" id="evr-full-fields">
+      <div class="fg fg-full"><label class="fl">Full Name *</label><input class="fi" id="evr-name" placeholder="Your full name" required></div>
+      <div class="fg"><label class="fl">Sex *</label><select class="fs" id="evr-sex"><option value="">Select...</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select></div>
+      <div class="fg"><label class="fl">Phone Number *</label><input class="fi" id="evr-contact" placeholder="+94 77 XXX XXXX" type="tel"></div>
+      <div class="fg"><label class="fl">WhatsApp Number</label><input class="fi" id="evr-wa" placeholder="+94 77 XXX XXXX" type="tel"></div>
+      <div class="fg"><label class="fl">Blood Group (if known)</label><select class="fs" id="evr-bt"><option value="">Not sure / Skip</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+      <div class="fg fg-full"><label class="fl">Email (if you have one)</label><input class="fi" id="evr-email" placeholder="your@email.com (optional)" type="email"></div>
+      <div class="fg fg-full"><label class="fl">Address *</label><input class="fi" id="evr-addr" placeholder="Your full address"></div>
+    </div>
+    <button class="btn btn-p mt16 w100" onclick="submitEvReg()" style="justify-content:center;font-size:1rem;padding:15px;">✅ Confirm Event Registration</button>
+    <p style="text-align:center;font-size:.74rem;color:var(--txt3);margin-top:10px;">Fields marked * are required. You will be invited to the WhatsApp group.</p>
+  </div>
+</div>
+
+<!-- OC Detail -->
+<div class="ov" id="oc-modal">
+  <div class="modal"><button class="mcl" onclick="closeModal('oc-modal')">✕</button><div id="oc-detail"></div></div>
+</div>
+
+<!-- Lightbox -->
+<div id="lb" onclick="closeLB()"><div id="lbx">✕</div><div id="lb-con"></div></div>
+
+<!-- OC Edit Modal -->
+<div class="ov" id="oc-edit-ov">
+  <div class="modal modal-wide" style="max-width:580px;">
+    <button class="mcl" onclick="closeModal('oc-edit-ov')">✕</button>
+    <h2 class="mt">✏️ Edit Committee Member</h2>
+    <input type="hidden" id="oc-edit-id">
+    <div class="afg">
+      <div class="fg"><label class="al">Full Name *</label><input class="ai" id="oc-edit-nm" placeholder="Member's full name"></div>
+      <div class="fg"><label class="al">Role / Position</label><input class="ai" id="oc-edit-rl" placeholder="e.g. President, Secretary"></div>
+      <div class="fg"><label class="al">Phone Number</label><input class="ai" id="oc-edit-ph" placeholder="+94 77 XXX XXXX" type="tel"></div>
+      <div class="fg"><label class="al">Email</label><input class="ai" id="oc-edit-em" type="email" placeholder="email@example.com"></div>
+      <div class="fg"><label class="al">Joined Year</label><input class="ai" id="oc-edit-yr" type="number" placeholder="2020"></div>
+      <div class="fg"><label class="al">New Photo (optional)</label><input type="file" class="ai" id="oc-edit-photo" accept="image/*" onchange="prevOCEditPhoto()"><img id="oc-edit-ph-prev" class="ph-prev" style="margin-top:8px;"></div>
+      <div class="fg" style="grid-column:1/-1;"><label class="al">Bio / Personal Info</label><textarea class="ata" id="oc-edit-bio" placeholder="Brief bio, personal info, achievements..."></textarea></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;">
+      <button class="btn btn-p btn-sm" onclick="saveEditOC()">💾 Save Changes</button>
+      <button class="btn btn-o btn-sm" onclick="closeModal('oc-edit-ov')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ADMIN PANEL ═══ -->
+<div id="adm">
+  <div class="adm-top">
+    <div class="adm-logo">♥ Life Flow <span>Admin Dashboard · 98 Friends</span></div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="adm-profile-wrap" onclick="showAS('settings',document.querySelector('.si[onclick*=settings]'))" style="cursor:pointer;" title="My Profile">
+        <div class="adm-avatar" id="adm-hdr-avatar">👤</div>
+        <div>
+          <div class="adm-profile-name" id="adm-hdr-name">Admin</div>
+          <div class="adm-profile-role">98 Friends · Life Flow</div>
+        </div>
+      </div>
+      <button class="btn btn-o btn-sm" onclick="closeAdmin()">✕ Exit Admin</button>
+    </div>
+  </div>
+  <div class="adm-body">
+    <!-- SIDEBAR -->
+    <div class="adm-sb">
+      <div class="si active" onclick="showAS('dashboard',this)"><span class="si-ic">📊</span><span>Dashboard</span></div>
+      <div class="si" onclick="showAS('donors',this)"><span class="si-ic">👥</span><span>Donors</span></div>
+      <div class="si" onclick="showAS('evregs',this)"><span class="si-ic">📋</span><span>Event Regs</span></div>
+      <div class="sdiv"></div>
+      <div class="si" onclick="showAS('events',this)"><span class="si-ic">📅</span><span>Events</span></div>
+      <div class="si" onclick="showAS('past',this)"><span class="si-ic">🕐</span><span>Past Events</span></div>
+      <div class="si" onclick="showAS('memories',this)"><span class="si-ic">🖼️</span><span>Memories</span></div>
+      <div class="sdiv"></div>
+      <div class="si" onclick="showAS('committee',this)"><span class="si-ic">👔</span><span>Committee</span></div>
+      <div class="si" onclick="showAS('budget',this)"><span class="si-ic">💰</span><span>Budget</span></div>
+      <div class="sdiv"></div>
+      <div class="si" onclick="showAS('sms',this)"><span class="si-ic">📱</span><span>SMS Notify</span></div>
+      <div class="si" onclick="showAS('settings',this)"><span class="si-ic">⚙️</span><span>Settings</span></div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="adm-con">
+
+      <!-- DASHBOARD -->
+      <div class="as active" id="as-dashboard">
+        <div class="ast">Dashboard</div><div class="asd">Welcome to Life Flow Admin — 98 Friends, Sooriyawewa</div>
+        <div class="ag4 mb16" id="dash-stats"></div>
+        <div class="ag2">
+          <div class="ac2"><div class="ac2-t">🩸 Blood Type Distribution</div><div id="bt-dist"></div></div>
+          <div class="ac2"><div class="ac2-t">📅 Next Upcoming Events</div><div id="dash-ev"></div></div>
+        </div>
+        <div class="ac2 mt16"><div class="ac2-t">💬 Recent Comments</div><div id="dash-cm"></div></div>
+      </div>
+
+      <!-- DONORS -->
+      <div class="as" id="as-donors">
+        <div class="ast">Registered Donors</div><div class="asd">All donor records sorted by registration year. Search, export, and manage.</div>
+        <div class="exp-row">
+          <input class="srch" id="d-srch" placeholder="Search by name, NIC, blood type..." oninput="filterDonors()">
+          <select class="ai" id="d-yr-filter" style="width:120px;" onchange="filterDonors()"><option value="">All Years</option></select>
+          <button class="btn btn-p btn-sm" onclick="expPDF()">📄 PDF</button>
+          <button class="btn btn-g btn-sm" onclick="expXLSX()">📊 Excel</button>
+          <button class="btn btn-o btn-sm" onclick="expTXT()">📋 Text</button>
+          <button class="btn btn-d btn-sm" onclick="clearDonors()">🗑 Clear All</button>
+        </div>
+        <div id="donors-by-year"></div>
+      </div>
+
+      <!-- EVENT REGISTRATIONS -->
+      <div class="as" id="as-evregs">
+        <div class="ast">Event Registrations</div><div class="asd">See who registered for each event. Add manual entries for past events.</div>
+        <div class="ac2 mb16">
+          <div class="ac2-t">📋 View Registrations by Event</div>
+          <div class="fg mb8"><label class="al">Select Event</label><select class="asel" id="evr-sel" onchange="showEvRegs()"><option value="">— Select event —</option></select></div>
+          <div id="evr-export-row" style="display:none;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+            <button class="btn btn-p btn-sm" onclick="expEvRegsPDF()">📄 Export PDF</button>
+            <button class="btn btn-g btn-sm" onclick="expEvRegsXLSX()">📊 Export Excel</button>
+            <button class="btn btn-o btn-sm" onclick="expEvRegsTXT()">📋 Export Text</button>
+            <span id="evr-export-label" style="font-size:.78rem;color:var(--txt3);align-self:center;"></span>
+          </div>
+          <div id="evr-list"></div>
+        </div>
+        <div class="ac2">
+          <div class="ac2-t">➕ Add Manual Past Event Attendee</div>
+          <p style="font-size:.79rem;color:var(--txt3);margin-bottom:14px;">Record attendees from events before this website was made (e.g., 2024 blood donation). They will automatically be invited to the WhatsApp group.</p>
+          <div class="afg3">
+            <div class="fg"><label class="al">Event *</label><select class="asel" id="man-ev-sel"><option value="">— Select event —</option></select></div>
+            <div class="fg"><label class="al">Full Name *</label><input class="ai" id="man-name" placeholder="Full name" onkeypress="if(event.key==='Enter'){document.getElementById('man-contact').focus();}"></div>
+            <div class="fg"><label class="al">Sex</label><select class="asel" id="man-sex"><option value="">—</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select></div>
+            <div class="fg"><label class="al">Phone Number *</label><input class="ai" id="man-contact" placeholder="Phone number" type="tel" onkeypress="if(event.key==='Enter'){document.getElementById('man-wa').focus();}"></div>
+            <div class="fg"><label class="al">WhatsApp Number</label><input class="ai" id="man-wa" placeholder="WhatsApp number" type="tel" onkeypress="if(event.key==='Enter'){document.getElementById('man-addr').focus();}"></div>
+            <div class="fg"><label class="al">Blood Group</label><select class="asel" id="man-bt"><option value="">—</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+            <div class="fg"><label class="al">NIC</label><input class="ai" id="man-nic" placeholder="NIC number" onkeypress="if(event.key==='Enter'){document.getElementById('man-notes').focus();}"></div>
+            <div class="fg"><label class="al">Email</label><input class="ai" id="man-email" placeholder="email@example.com" type="email"></div>
+            <div class="fg"><label class="al">Notes</label><input class="ai" id="man-notes" placeholder="e.g. Donated in 2024 annual drive" onkeypress="if(event.key==='Enter'){addManualAttendee();}"></div>
+          </div>
+          <div class="fg mt8"><label class="al">Address</label><input class="ai" id="man-addr" placeholder="Residential address" onkeypress="if(event.key==='Enter'){document.getElementById('man-nic').focus();}"></div>
+          <div style="background:rgba(37,211,102,.07);border:1px solid rgba(37,211,102,.22);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:.8rem;color:#25D366;display:flex;align-items:center;gap:8px;">
+            <span style="font-size:1.2rem;">💬</span>
+            <div><strong>Auto WhatsApp Invite:</strong> After adding, admin will be prompted to open WhatsApp to invite this person to the group.</div>
+          </div>
+          <button class="btn btn-p btn-sm mt16" onclick="addManualAttendee()">➕ Add Attendee &amp; Invite to WhatsApp</button>
+        </div>
+      </div>
+
+      <!-- UPCOMING EVENTS -->
+      <div class="as" id="as-events">
+        <div class="ast">Manage Upcoming Events</div><div class="asd">Add and manage upcoming blood donation events with gifts.</div>
+        <div class="ac2">
+          <div class="ac2-t">➕ Add New Event</div>
+          <div class="afg">
+            <div class="fg"><label class="al">Event Title</label><input class="ai" id="ev-t" placeholder="Annual Blood Drive 2025"></div>
+            <div class="fg"><label class="al">Date</label><input class="ai" id="ev-d" type="date"></div>
+            <div class="fg"><label class="al">Time</label><input class="ai" id="ev-tm" type="time"></div>
+            <div class="fg"><label class="al">Location</label><input class="ai" id="ev-loc" placeholder="Venue / Location"></div>
+            <div class="fg" style="grid-column:1/-1;"><label class="al">Description</label><textarea class="ata" id="ev-desc" placeholder="Event details..."></textarea></div>
+            <div class="fg" style="grid-column:1/-1;">
+              <label class="al">Annual Gifts (press Enter to add)</label>
+              <div style="display:flex;gap:7px;margin-bottom:7px;"><input class="ai" id="ev-gift-in" placeholder="e.g. Certificate, T-Shirt, Cash Prize..." onkeypress="if(event.key==='Enter'){addEvGift();event.preventDefault();}"><button class="btn btn-go btn-sm" onclick="addEvGift()">+ Add</button></div>
+              <div class="gifts-al" id="ev-gifts-al"></div>
+            </div>
+          </div>
+          <button class="btn btn-p btn-sm mt16" onclick="addEvent()">📅 Save Event</button>
+        </div>
+        <div class="ac2"><div class="ac2-t">📋 Upcoming Events</div><div id="adm-ev-list"></div></div>
+      </div>
+
+      <!-- PAST EVENTS -->
+      <div class="as" id="as-past">
+        <div class="ast">Past Events Data</div><div class="asd">Add records for completed events — including events before this website.</div>
+        <div class="ac2">
+          <div class="ac2-t">➕ Add Past Event Record</div>
+          <div class="afg">
+            <div class="fg"><label class="al">Event Title</label><input class="ai" id="pe-t" placeholder="e.g. 2024 Annual Blood Donation"></div>
+            <div class="fg"><label class="al">Event Date</label><input class="ai" id="pe-d" type="date"></div>
+            <div class="fg"><label class="al">Year (for pre-website events)</label><input class="ai" id="pe-yr" type="number" placeholder="e.g. 2023"></div>
+            <div class="fg"><label class="al">Donors Attended</label><input class="ai" id="pe-don" type="number" placeholder="e.g. 45"></div>
+            <div class="fg"><label class="al">Blood Collected (units)</label><input class="ai" id="pe-blood" type="number" placeholder="e.g. 40"></div>
+            <div class="fg" style="grid-column:1/-1;"><label class="al">Description / Notes</label><textarea class="ata" id="pe-desc" placeholder="Event summary, hospital, details..."></textarea></div>
+            <div class="fg" style="grid-column:1/-1;">
+              <label class="al">Gifts Given</label>
+              <div style="display:flex;gap:7px;margin-bottom:7px;"><input class="ai" id="pe-gift-in" placeholder="Gift name..." onkeypress="if(event.key==='Enter'){addPEGift();event.preventDefault();}"><button class="btn btn-go btn-sm" onclick="addPEGift()">+ Add</button></div>
+              <div class="gifts-al" id="pe-gifts-al"></div>
+            </div>
+          </div>
+          <button class="btn btn-p btn-sm mt16" onclick="addPastEvent()">📝 Save Past Event</button>
+        </div>
+        <div class="ac2"><div class="ac2-t">📚 Past Event Records</div><div id="adm-pe-list"></div></div>
+      </div>
+
+      <!-- MEMORIES -->
+      <div class="as" id="as-memories">
+        <div class="ast">Memory Gallery</div><div class="asd">Upload images and videos for past events.</div>
+        <div class="ac2">
+          <div class="ac2-t">📸 Upload Memories</div>
+          <div class="fg mb16"><label class="al">Select Past Event</label><select class="asel" id="mem-ev-sel"></select></div>
+          <div class="fg mb16"><label class="al">Upload Images / Videos (max 2MB each)</label><input type="file" class="ai" id="mem-files" accept="image/*,video/*" multiple onchange="prevMemFiles()"></div>
+          <div id="mem-prev" style="display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;"></div>
+          <button class="btn btn-p btn-sm" onclick="uploadMems()">💾 Save Memories</button>
+        </div>
+        <div class="ac2"><div class="ac2-t">🖼️ All Memories</div><div id="all-mems"></div></div>
+      </div>
+
+      <!-- COMMITTEE -->
+      <div class="as" id="as-committee">
+        <div class="ast">Organizing Committee (OC)</div><div class="asd">Add and manage 98 Friends committee members with photo and personal info.</div>
+        <div class="ac2">
+          <div class="ac2-t">➕ Add OC Member</div>
+          <div class="afg">
+            <div class="fg"><label class="al">Full Name</label><input class="ai" id="oc-nm" placeholder="Member's full name"></div>
+            <div class="fg"><label class="al">Role / Position</label><input class="ai" id="oc-rl" placeholder="e.g. President, Secretary"></div>
+            <div class="fg"><label class="al">Phone Number</label><input class="ai" id="oc-ph" placeholder="+94 77 XXX XXXX"></div>
+            <div class="fg"><label class="al">Email</label><input class="ai" id="oc-em" type="email" placeholder="email@example.com"></div>
+            <div class="fg"><label class="al">Joined Year</label><input class="ai" id="oc-yr" type="number" placeholder="2020"></div>
+            <div class="fg"><label class="al">Photo</label><input type="file" class="ai" id="oc-photo" accept="image/*" onchange="prevOCPhoto()"><img id="oc-ph-prev" class="ph-prev" style="margin-top:8px;"></div>
+            <div class="fg" style="grid-column:1/-1;"><label class="al">Bio / Personal Info</label><textarea class="ata" id="oc-bio" placeholder="Brief bio, personal info, achievements..."></textarea></div>
+          </div>
+          <button class="btn btn-p btn-sm mt16" onclick="addOCMember()">👤 Add Member</button>
+        </div>
+        <div class="ac2"><div class="ac2-t">👥 Committee Members</div><div class="ag3" id="adm-oc-list" style="gap:14px;"></div></div>
+      </div>
+
+      <!-- BUDGET -->
+      <div class="as" id="as-budget">
+        <div class="ast">Annual Event Budget</div><div class="asd">Track income and expenses by year — visible to admins only.</div>
+        <div class="ac2">
+          <div class="ac2-t">➕ Add Budget Entry</div>
+          <div class="afg">
+            <div class="fg"><label class="al">Year</label><input class="ai" id="bud-yr" type="number" placeholder="2025" onkeypress="if(event.key==='Enter'){document.getElementById('bud-desc').focus();}"></div>
+            <div class="fg"><label class="al">Type</label><select class="asel" id="bud-type"><option value="income">Income</option><option value="expense">Expense</option></select></div>
+            <div class="fg"><label class="al">Description</label><input class="ai" id="bud-desc" placeholder="e.g. Venue Cost, Donation from sponsor" onkeypress="if(event.key==='Enter'){document.getElementById('bud-amt').focus();}"></div>
+            <div class="fg"><label class="al">Amount (Rs.)</label><input class="ai" id="bud-amt" type="number" placeholder="0.00" onkeypress="if(event.key==='Enter'){addBudget();}"></div>
+          </div>
+          <button class="btn btn-p btn-sm mt16" onclick="addBudget()">💰 Add Entry</button>
+        </div>
+        <div class="ac2">
+          <div class="ac2-t">📊 Budget Overview</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
+            <label class="al" style="margin:0;">Filter by Year:</label>
+            <select class="asel" id="bud-yr-f" style="width:110px;" onchange="renderBudget()"></select>
+          </div>
+          <!-- Beautiful Export Groups -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:20px;">
+            <div class="exp-group exp-group-inc">
+              <div class="exp-group-lbl">💚 Income Exports</div>
+              <div class="exp-btns-row">
+                <button class="btn btn-sm btn-pdf-inc" onclick="expIncomePDF()">📄 PDF</button>
+                <button class="btn btn-sm btn-xlsx" onclick="expIncomeXLSX()">📊 Excel</button>
+              </div>
+            </div>
+            <div class="exp-group exp-group-exp">
+              <div class="exp-group-lbl">❤️ Expense Exports</div>
+              <div class="exp-btns-row">
+                <button class="btn btn-sm btn-pdf-exp" onclick="expExpensePDF()">📄 PDF</button>
+                <button class="btn btn-sm btn-xlsx-exp" onclick="expExpenseXLSX()">📊 Excel</button>
+              </div>
+            </div>
+            <div class="exp-group exp-group-all">
+              <div class="exp-group-lbl">🌟 Full Budget</div>
+              <div class="exp-btns-row">
+                <button class="btn btn-sm btn-pdf-all" onclick="expBudgetPDF()">📄 PDF</button>
+                <button class="btn btn-sm btn-xlsx-all" onclick="expBudgetXLSX()">📊 Excel</button>
+              </div>
+            </div>
+          </div>
+          <div id="bud-con"></div>
+        </div>
+      </div>
+
+      <!-- SMS -->
+      <div class="as" id="as-sms">
+        <div class="ast">SMS Notifications</div><div class="asd">Send messages to all registered donors via WhatsApp or TextBee (free SMS).</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+          <div style="background:rgba(37,211,102,.07);border:1px solid rgba(37,211,102,.25);border-radius:12px;padding:16px;">
+            <h4 style="color:#25D366;margin-bottom:8px;font-size:.9rem;">💬 WhatsApp (Easiest — No Setup)</h4>
+            <p style="font-size:.8rem;color:var(--txt3);line-height:1.6;">Compose a message → click <strong style="color:#25D366;">Send via WhatsApp</strong> → opens WhatsApp Web with your message pre-filled. Just paste &amp; send to your group!</p>
+          </div>
+          <div style="background:rgba(220,20,60,.06);border:1px solid rgba(220,20,60,.2);border-radius:12px;padding:16px;">
+            <h4 style="color:var(--p);margin-bottom:8px;font-size:.9rem;">📡 TextBee (Real SMS — Free)</h4>
+            <p style="font-size:.8rem;color:var(--txt3);line-height:1.6;">1. Go to <a href="https://textbee.dev" target="_blank" style="color:var(--p);">textbee.dev</a> → free account<br>2. Install TextBee app on an Android phone<br>3. Paste API Key + Device ID in <strong>Settings</strong></p>
+          </div>
+        </div>
+        <div class="ac2">
+          <div class="ac2-t">📱 Compose &amp; Send Message</div>
+          <div class="tab-r">
+            <button class="tb active" onclick="smsTab('event',this)">Event Reminder</button>
+            <button class="tb" onclick="smsTab('thank',this)">Thank You</button>
+            <button class="tb" onclick="smsTab('custom',this)">Custom</button>
+          </div>
+          <div class="fg mb16"><label class="al">Message (sent to all donors)</label><textarea class="ata" id="sms-msg" style="min-height:110px;" placeholder="Type your message..."></textarea></div>
+          <div id="sms-char" style="font-size:.74rem;color:var(--txt3);margin-bottom:12px;">Characters: 0 / 160</div>
+          <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px;">
+            <button class="btn-wa2" onclick="sendViaWhatsApp()">💬 Send via WhatsApp</button>
+            <button class="btn btn-p btn-sm" onclick="sendSMSAll()">📤 SMS to All Donors</button>
+            <button class="btn btn-o btn-sm" onclick="copyNums()">📋 Copy Numbers</button>
+          </div>
+          <div class="sms-prog" id="sms-prog">
+            <div id="sms-prog-txt" style="font-size:.84rem;color:var(--txt2);">Sending...</div>
+            <div class="prog-bar"><div class="prog-fill" id="sms-prog-fill" style="width:0%;"></div></div>
+            <div id="sms-prog-res" style="font-size:.78rem;color:var(--txt3);margin-top:6px;"></div>
+          </div>
+          <div style="font-size:.78rem;color:var(--txt3);line-height:1.6;padding:12px;background:var(--bg3);border-radius:8px;margin-top:8px;">
+            💡 <strong>Tip:</strong> Use <strong style="color:#25D366;">WhatsApp</strong> for instant, free messaging to your group. For direct SMS to individual donors, configure <strong>TextBee</strong> in Settings.
+          </div>
+        </div>
+        <div class="ac2"><div class="ac2-t">📋 Message Log</div><div id="sms-log"></div></div>
+        <div class="ac2"><div class="ac2-t">📞 All Registered Numbers</div><div id="ph-list"></div></div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="as" id="as-settings">
+        <div class="ast">Settings</div><div class="asd">Configure site info, password, SMS, and data.</div>
+
+        <!-- ADMIN PROFILE -->
+        <div class="ac2" style="background:linear-gradient(135deg,rgba(220,20,60,.08),rgba(139,0,0,.04));border-color:rgba(220,20,60,.28);">
+          <div class="ac2-t">👤 My Admin Profile</div>
+          <div style="display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:start;">
+            <!-- Avatar upload -->
+            <div style="text-align:center;">
+              <div class="prof-upload-zone" onclick="document.getElementById('prof-photo-inp').click()" style="width:130px;padding:16px 12px;">
+                <div id="prof-avatar-preview">
+                  <div class="prof-avatar-placeholder" id="prof-avatar-ph">👤</div>
+                  <img id="prof-avatar-img" class="prof-avatar-big" style="display:none;" src="">
+                </div>
+                <div class="prof-change-lbl">Click to change<br>profile picture</div>
+                <div style="font-size:.65rem;color:var(--txt3);margin-top:4px;">PNG, JPG • max 2MB</div>
+              </div>
+              <input type="file" id="prof-photo-inp" accept="image/*" style="display:none;" onchange="prevAdminPhoto()">
+            </div>
+            <!-- Info fields -->
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div class="fg">
+                <label class="al">Display Name</label>
+                <input class="ai" id="prof-name" placeholder="e.g. Mudushka Suraj">
+              </div>
+              <div class="fg">
+                <label class="al">Admin Email</label>
+                <input class="ai" id="prof-email" type="email" placeholder="admin@example.com">
+              </div>
+              <div class="fg">
+                <label class="al">Phone / Contact</label>
+                <input class="ai" id="prof-phone" type="tel" placeholder="+94 77 XXX XXXX">
+              </div>
+              <div class="fg">
+                <label class="al">Role / Title</label>
+                <input class="ai" id="prof-role" placeholder="e.g. Administrator, President">
+              </div>
+              <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:4px;">
+                <button class="btn btn-p btn-sm" onclick="saveAdminProfile()">💾 Save Profile</button>
+                <button class="btn btn-o btn-sm" onclick="clearAdminPhoto()">🗑 Remove Photo</button>
+              </div>
+              <p id="prof-msg" style="font-size:.78rem;display:none;margin:0;"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHANGE PASSWORD -->
+        <div class="ac2">
+          <div class="ac2-t">🔐 Change Admin Password</div>
+          <div class="s-row">
+            <div><div style="font-size:.88rem;font-weight:600;">Current Password</div></div>
+            <input class="ai" id="s-cur-pw" type="password" placeholder="Current password" style="width:220px;">
+          </div>
+          <div class="s-row">
+            <div><div style="font-size:.88rem;font-weight:600;">New Password</div></div>
+            <input class="ai" id="s-new-pw" type="password" placeholder="New password (min 6 chars)" style="width:220px;">
+          </div>
+          <div class="s-row">
+            <div><div style="font-size:.88rem;font-weight:600;">Confirm New Password</div></div>
+            <input class="ai" id="s-con-pw" type="password" placeholder="Confirm new password" style="width:220px;">
+          </div>
+          <button class="btn btn-p btn-sm mt16" onclick="changePassword()">🔐 Change Password</button>
+          <p id="pw-msg" style="font-size:.78rem;margin-top:8px;display:none;"></p>
+        </div>
+
+        <!-- SITE IDENTITY -->
+        <div class="ac2">
+          <div class="ac2-t">🏷️ Site Identity &amp; Contact Info</div>
+          <div class="s-row"><div><div style="font-size:.88rem;font-weight:600;">Organization Name</div><div style="font-size:.76rem;color:var(--txt3);">Shown in header and footer</div></div><input class="ai" id="s-orgname" placeholder="e.g. 98 Friends" style="width:220px;"></div>
+          <div class="s-row"><div><div style="font-size:.88rem;font-weight:600;">Public Contact Phone</div></div><input class="ai" id="s-phone" placeholder="0772628991" style="width:200px;" type="tel"></div>
+          <div class="s-row"><div><div style="font-size:.88rem;font-weight:600;">Public Contact Email</div></div><input class="ai" id="s-email" placeholder="mudushkasuraj1982@gmail.com" style="width:260px;" type="email"></div>
+          <div class="s-row"><div><div style="font-size:.88rem;font-weight:600;">Location / City</div></div><input class="ai" id="s-city" placeholder="Sooriyawewa, Sri Lanka" style="width:240px;"></div>
+        </div>
+
+        <!-- WHATSAPP & COUNTERS -->
+        <div class="ac2">
+          <div class="ac2-t">⚙️ WhatsApp &amp; Counters</div>
+          <div class="s-row"><div><div style="font-size:.88rem;font-weight:600;">WhatsApp Group Link</div><div style="font-size:.76rem;color:var(--txt3);">Shown after donor registration &amp; event sign-up</div></div><input class="ai" id="s-wa" placeholder="https://chat.whatsapp.com/..." style="width:280px;"></div>
+          <div class="s-row"><div><div style="font-size:.88rem;font-weight:600;">Lives Saved Override</div><div style="font-size:.76rem;color:var(--txt3);">Override hero counter number</div></div><input class="ai" id="s-lives" type="number" placeholder="0" style="width:100px;"></div>
+        </div>
+
+        <!-- SMS -->
+        <div class="ac2">
+          <div class="ac2-t">📡 TextBee SMS Configuration</div>
+          <p style="font-size:.8rem;color:var(--txt3);margin-bottom:14px;">Get your free API key and Device ID from <a href="https://textbee.dev" target="_blank" style="color:var(--p);">textbee.dev</a></p>
+          <div class="s-row"><div><div style="font-size:.88rem;font-weight:600;">TextBee API Key</div></div><input class="ai" id="s-apikey" type="password" placeholder="Your TextBee API Key" style="width:260px;"></div>
+          <div class="s-row"><div><div style="font-size:.88rem;font-weight:600;">TextBee Device ID</div></div><input class="ai" id="s-devid" placeholder="Your Device ID" style="width:220px;"></div>
+          <div class="s-row"><div><div style="font-size:.88rem;font-weight:600;">Country Code Prefix</div><div style="font-size:.76rem;color:var(--txt3);">Prepended to local numbers</div></div><input class="ai" id="s-prefix" placeholder="+94" style="width:100px;"></div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px;">
+            <button class="btn btn-p btn-sm" onclick="testSMS()">🧪 Test SMS</button>
+            <input class="ai" id="s-test-num" placeholder="Your test phone number" style="width:200px;">
+          </div>
+        </div>
+
+        <div class="ac2">
+          <div class="ac2-t">💾 Save All Settings</div>
+          <button class="btn btn-p btn-sm" onclick="saveSettings()">💾 Save All Settings</button>
+        </div>
+
+        <div class="ac2">
+          <div class="ac2-t">🗄️ Data Management</div>
+          <div style="background:rgba(220,20,60,.06);border:1px solid rgba(220,20,60,.18);border-radius:10px;padding:14px;margin-bottom:14px;font-size:.8rem;color:var(--txt3);line-height:1.7;">
+            🔥 <strong style="color:var(--p);">Firebase Active</strong> — Project: <strong>lifeflow-98friends</strong><br>
+            All data is stored in Firestore and synced across all devices in real-time.<br>
+            <strong>Firestore Rules:</strong> Go to Firebase Console → Firestore → Rules and set:<br>
+            <code style="background:var(--bg4);padding:4px 8px;border-radius:5px;display:inline-block;margin-top:6px;font-size:.76rem;">allow read, write: if true;</code>
+          </div>
+          <div style="display:flex;gap:9px;flex-wrap:wrap;">
+            <button class="btn btn-o btn-sm" onclick="exportAll()">📤 Export All Data (JSON)</button>
+            <button class="btn btn-g btn-sm" onclick="importTrigger()">📥 Import Data (JSON)</button>
+            <button class="btn btn-d btn-sm" onclick="resetAll()">⚠️ Reset All Data</button>
+          </div>
+          <input type="file" id="imp-file" accept=".json" style="display:none;" onchange="handleImport(event)">
+        </div>
+      </div>
+
+    </div><!-- adm-con -->
+  </div><!-- adm-body -->
+</div><!-- admin -->
+
+<script>
+// ╔══════════════════════════════════════════════════════╗
+// ║  CONSTANTS & FIREBASE DATA LAYER                      ║
+// ╚══════════════════════════════════════════════════════╝
+const ADM_PASS = '628991Ss';
+
+// ── In-memory cache (synced from Firestore via real-time listeners) ──
+const _cache = {
+  donors: [], upcomingEvents: [], pastEvents: [], ocMembers: [],
+  budget: [], comments: [], evRegs: [], smsLog: [], settings: {}
+};
+
+// ── LocalStorage fallback for settings & large binary data (photos/videos) ──
+const LS = k => 'lf2_' + k;
+function lsGet(k, d=[]){ try{const v=localStorage.getItem(LS(k));return v?JSON.parse(v):d;}catch{return d;} }
+function lsSet(k,v){ try{localStorage.setItem(LS(k),JSON.stringify(v));}catch{} }
+
+// ── Synchronous get from cache (used by all render functions) ──
+function get(k, d=[]) {
+  if(k === 'settings') return Object.keys(_cache.settings).length ? _cache.settings : lsGet('settings', {wa:'',lives:0,apiKey:'',devId:'',prefix:'+94',testNum:''});
+  return _cache[k] !== undefined ? _cache[k] : d;
+}
+
+// ── Async Firebase write + cache update ──
+async function set(k, v) {
+  // Update cache immediately for instant UI
+  _cache[k] = v;
+  if(!window._fbReady){ lsSet(k,v); return; }
+
+  if(k === 'settings') {
+    // Settings stored as single doc
+    try { await window.fbSet('settings','global', v); } catch(e){ console.warn('FB set err',e); lsSet(k,v); }
+    return;
+  }
+
+  // Arrays — write each item as a document
+  // (We replace the whole collection by syncing cache; individual ops use fbAdd/fbDel)
+  lsSet(k, v); // keep local backup
+}
+
+// ── Settings helpers ──
+function getS(){ return get('settings', {wa:'',lives:0,apiKey:'',devId:'',prefix:'+94',testNum:''}); }
+async function setS(s){
+  _cache.settings = s;
+  lsSet('settings', s);
+  if(window._fbReady){ try{ await window.fbSet('settings','global',s); }catch(e){console.warn(e);} }
+}
+
+// ── Firebase real-time listeners (called once on init) ──
+function initFirebaseListeners() {
+  if(!window._fbReady || !window.fbListen) return;
+
+  const collections = ['donors','upcomingEvents','pastEvents','ocMembers','budget','comments','evRegs','smsLog'];
+  collections.forEach(col => {
+    window.fbListen(col, docs => {
+      // Sort by creation time
+      _cache[col] = docs.sort((a,b) => {
+        const ta = a._ts?.seconds || a.createdAt ? new Date(a.createdAt||0).getTime()/1000 : 0;
+        const tb = b._ts?.seconds || b.createdAt ? new Date(b.createdAt||0).getTime()/1000 : 0;
+        return tb - ta;
+      });
+      // Re-render whichever public section needs it
+      if(col === 'donors'){ updateStats(); filterDonors(); }
+      if(col === 'upcomingEvents'){ renderEvents(); renderAdminEvents(); }
+      if(col === 'pastEvents'){ renderPastEvents(); renderAdminPast(); updateMemEvSel(); }
+      if(col === 'ocMembers'){ renderCommittee(); renderAdminOC(); }
+      if(col === 'comments'){ renderComments(); }
+      if(col === 'evRegs'){ renderEvents(); }
+      if(col === 'budget'){ /* budget renders on demand */ }
+    });
+  });
+
+  // Settings listener
+  window.fbListen('settings', docs => {
+    const global = docs.find(d=>d.id==='global');
+    if(global){ _cache.settings = global; lsSet('settings', global); }
+  });
+}
+
+// ── Firebase add (returns new item with id) ──
+async function fbAdd(col, data) {
+  if(window._fbReady && window.fbAdd){
+    try {
+      const result = await window.fbAdd(col, data);
+      return result;
+    } catch(e){ console.warn('fbAdd error', e); }
+  }
+  // Fallback: local only
+  const item = { ...data, id: Date.now().toString() };
+  _cache[col] = [item, ..._cache[col]];
+  lsSet(col, _cache[col]);
+  return item;
+}
+
+// ── Firebase delete ──
+async function fbDel(col, id) {
+  _cache[col] = _cache[col].filter(x => x.id !== id);
+  lsSet(col, _cache[col]);
+  if(window._fbReady && window.fbDel){
+    try { await window.fbDel(col, id); } catch(e){ console.warn('fbDel error', e); }
+  }
+}
+
+// ── Firebase update single doc field ──
+async function fbUpd(col, id, data) {
+  const idx = _cache[col].findIndex(x=>x.id===id);
+  if(idx>=0) _cache[col][idx] = {..._cache[col][idx], ...data};
+  lsSet(col, _cache[col]);
+  if(window._fbReady && window.fbSet){
+    try { await window.fbSet(col, id, data); } catch(e){ console.warn('fbUpd error',e); }
+  }
+}
+
+// ── Show sync status indicator ──
+function showSyncStatus(msg, ok=true){
+  let el = document.getElementById('sync-status');
+  if(!el){ el=document.createElement('div'); el.id='sync-status';
+    el.style.cssText='position:fixed;bottom:16px;right:16px;z-index:9999;padding:9px 16px;border-radius:30px;font-size:.76rem;font-weight:700;letter-spacing:.04em;backdrop-filter:blur(10px);transition:opacity .5s;';
+    document.body.appendChild(el);
+  }
+  el.style.background = ok ? 'rgba(37,211,102,.9)' : 'rgba(220,20,60,.9)';
+  el.style.color = '#fff';
+  el.textContent = (ok ? '🔄 ' : '⚠️ ') + msg;
+  el.style.opacity='1';
+  clearTimeout(window._syncTimer);
+  window._syncTimer = setTimeout(()=>{ el.style.opacity='0'; }, 3000);
+}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║  TRANSLATIONS                                         ║
+// ╚══════════════════════════════════════════════════════╝
+const TR = {
+en:{
+  site_name:'Life Flow',n_home:'Home',n_about:'About',n_events:'Events',n_reg:'Register',
+  n_gallery:'Gallery',n_oc:'Committee',n_contact:'Contact',
+  h_badge:'🩸 Blood Donation Drive · Sooriyawewa, Sri Lanka',
+  h_title:'Life Flow',h_sub:'Donate Blood. Save Lives. Be a Hero.',
+  h_org:'✦ Organized by 98 Friends ✦ Sooriyawewa, Sri Lanka ✦',
+  h_reg_btn:'🩸 Register to Donate',h_ev_btn:'📅 View Events',
+  st_donors:'Donors',st_events:'Events',st_lives:'Lives Saved',st_friends:'Friends',
+  scroll:'Scroll to explore',
+  ab_tag:'About Us',ab_title:'Why Life Flow Matters',
+  ab_desc:'Life Flow is a community blood donation initiative by 98 Friends — passionate volunteers from Sooriyawewa dedicated to saving lives.',
+  ab_m_t:'Our Mission',ab_m_d:'Build a sustainable blood donation ecosystem in Sooriyawewa — ensuring no patient ever suffers from blood shortages.',
+  ab_v_t:'98 Friends Community',ab_v_d:'98 passionate friends united by one belief: every drop of donated blood gives another life a second chance.',
+  ab_l_t:'Location',ab_l_d:'Sooriyawewa, Southern Province, Sri Lanka. Serving local hospitals and health centers with regular drives.',
+  bt_tag:'Blood Types',bt_title:'All Blood Types Welcome',bt_desc:'Every blood type is precious. All groups are needed and valued.',
+  bt_mc:'Most Common',bt_r:'Rare',bt_c:'Common',bt_ur:'Universal Recipient',bt_vr:'Very Rare',bt_ud:'Universal Donor',
+  ev_tag:'Events',ev_title:'Upcoming Blood Drives',ev_desc:'Join our upcoming events. Gifts await our dedicated donors!',
+  no_ev:'No upcoming events yet. Check back soon!',
+  gal_tag:'Memories',gal_title:'Our Past Events',gal_desc:'Relive moments that changed lives.',
+  no_pe:'Our story is just beginning!',
+  reg_tag:'Register',reg_title:'Become a Donor',
+  reg_desc:"Join our lifesaving community. You'll be invited to our WhatsApp group after registration.",
+  rf_name:'Full Name',rf_email:'Email Address',rf_sex:'Sex',rf_sel:'Select...',rf_male:'Male',rf_female:'Female',rf_other:'Other',
+  rf_contact:'Contact Number',rf_wa:'WhatsApp Number',rf_addr:'Address',rf_nic:'NIC Number',
+  rf_wt:'Weight (kg)',rf_bt:'Blood Type',rf_date:'Registration Date',
+  rf_submit:'🩸 Complete Registration',
+  rf_note:"By registering you agree to be contacted for donation drives. You'll be added to our WhatsApp group.",
+  cm_tag:'Community',cm_title:'Leave a Comment',cm_ft:'💬 Share Your Thoughts',
+  cm_name:'Your Name',cm_bt:'Blood Type (optional)',cm_txt:'Comment',cm_sub:'Post Comment',
+  oc_tag:'Our Team',oc_title:'Organizing Committee',oc_desc:'Meet the 98 Friends who make Life Flow possible.',
+  no_oc:'Committee members will appear here.',
+  ct_tag:'Contact',ct_title:'Get in Touch',ct_ph:'Phone',ct_em:'Email',ct_loc:'Location',
+  ct_place:'Sooriyawewa, Southern Province, Sri Lanka',ct_org:'Organization',ct_oname:'98 Friends · Life Flow Blood Donation',
+  ct_find:'Find Us',ct_map:'Sooriyawewa, Sri Lanka',ct_map_btn:'Open in Maps',
+  ct_note:'We welcome all blood group donors. Contact us for more information.',
+  ft_tag:'Organized by 98 Friends, Sooriyawewa, Sri Lanka.\nSaving lives one drop at a time.',
+  ft_ql:'Quick Links',ft_more:'More',
+  ft_cp:'© 2024 Life Flow · 98 Friends · Sooriyawewa, Sri Lanka. All Rights Reserved.',
+  wa_t:'Registration Successful!',
+  wa_d:"Thank you for registering as a Life Flow blood donor! Join our WhatsApp group to stay updated on events.",
+  wa_join:'Join WhatsApp Group',wa_sms:'📱 You will receive an SMS confirmation shortly.'
+},
+si:{
+  site_name:'ජීවිත ප්‍රවාහය',n_home:'මුල් පිටුව',n_about:'අප ගැන',n_events:'සිදුවීම්',n_reg:'ලියාපදිංචිය',
+  n_gallery:'ගැලරිය',n_oc:'කමිටුව',n_contact:'සම්බන්ධ',
+  h_badge:'🩸 රුධිර දායකත්ව ව්‍යාපාරය · සූරියවැව, ශ්‍රී ලංකා',
+  h_title:'ජීවිත ප්‍රවාහය',h_sub:'රුධිරය දෙන්න. ජීවිත බේරා ගන්න. වීරයෙකු වන්න.',
+  h_org:'✦ 98 මිතුරන් විසින් ✦ සූරියවැව, ශ්‍රී ලංකා ✦',
+  h_reg_btn:'🩸 ලියාපදිංචි වන්න',h_ev_btn:'📅 සිදුවීම් බලන්න',
+  st_donors:'දායකයන්',st_events:'සිදුවීම්',st_lives:'බේරා ගත් ජීවිත',st_friends:'මිතුරන්',
+  scroll:'පහළ අනුචලනය කරන්න',
+  ab_tag:'අප ගැන',ab_title:'ජීවිත ප්‍රවාහය ඇයි වැදගත්',
+  ab_desc:'ජීවිත ප්‍රවාහය යනු 98 මිතුරන් විසින් ව්‍යාපාරකරන ප්‍රජා-ධාවිත රුධිර දායකත්ව ව්‍යාපෘතියකි.',
+  ab_m_t:'අපගේ මෙහෙවර',ab_m_d:'සූරියවැව ප්‍රදේශයේ ස්ථිරසාර රුධිර දායකත්ව පරිසරයක් ගොඩනැගීමට.',
+  ab_v_t:'98 මිතුරන්ගේ ප්‍රජාව',ab_v_d:'රුධිරය දෙන සෑම බිඳකම ජීවිතයකට දෙවන අවස්ථාවක් ලෙස විශ්වාස කරන 98 මිතුරන්.',
+  ab_l_t:'ස්ථානය',ab_l_d:'සූරියවැව, දකුණු පළාත, ශ්‍රී ලංකා.',
+  bt_tag:'රුධිර වර්ග',bt_title:'සියළු රුධිර වර්ග ආදරයෙන් පිළිගනිමු',bt_desc:'සෑම රුධිර වර්ගයක්ම වැදගත් ය.',
+  bt_mc:'බහුලව',bt_r:'දුර්ලභ',bt_c:'සාමාන්‍ය',bt_ur:'සර්ව ලාභීය',bt_vr:'ඉතා දුර්ලභ',bt_ud:'සර්ව දායකයා',
+  ev_tag:'සිදුවීම්',ev_title:'ඉදිරි රුධිර දායකත්ව',ev_desc:'ඉදිරි සිදුවීම්වලට සහභාගී වන්න. දායකයන්ට තෑගි ලැබේ!',
+  no_ev:'ඉදිරි සිදුවීම් නොමැත. ඉදිරියේදී නැවත බලන්න!',
+  gal_tag:'මතකයන්',gal_title:'අපගේ පසු සිදුවීම්',gal_desc:'ජීවිත වෙනස් කළ මතකයන් නැවත ජීවත් වන්න.',
+  no_pe:'අපගේ කතාව ආරම්භ වෙමින් ය!',
+  reg_tag:'ලියාපදිංචිය',reg_title:'දායකයෙකු වන්න',
+  reg_desc:'ලියාපදිංචි කිරීමෙන් පසු WhatsApp කණ්ඩායමට ආරාධනා කෙරේ.',
+  rf_name:'සම්පූර්ණ නම',rf_email:'විද්‍යුත් ලිපිනය',rf_sex:'ලිංගය',rf_sel:'තෝරන්න...',rf_male:'පිරිමි',rf_female:'ගැහැනු',rf_other:'වෙනත්',
+  rf_contact:'දුරකතන අංකය',rf_wa:'WhatsApp අංකය',rf_addr:'ලිපිනය',rf_nic:'ජා.හැ.ප. අංකය',
+  rf_wt:'බර (kg)',rf_bt:'රුධිර වර්ගය',rf_date:'ලියාපදිංචි දිනය',
+  rf_submit:'🩸 ලියාපදිංචිය සම්පූර්ණ',rf_note:'ලියාපදිංචි වීමෙන් ඔබ WhatsApp කණ්ඩායමට සම්බන්ධ වනු ඇත.',
+  cm_tag:'ප්‍රජාව',cm_title:'අදහස් ලියන්න',cm_ft:'💬 ඔබගේ අදහස් බෙදාගන්න',
+  cm_name:'ඔබගේ නම',cm_bt:'රුධිර වර්ගය',cm_txt:'අදහස',cm_sub:'අදහස් පළ කරන්න',
+  oc_tag:'අපගේ කණ්ඩායම',oc_title:'සංවිධාන කමිටුව',oc_desc:'ජීවිත ප්‍රවාහය සම්භව කරන 98 මිතුරන් හඳුනාගන්න.',
+  no_oc:'කමිටු සාමාජිකයන් ඉදිරියේදී දිස් වනු ඇත.',
+  ct_tag:'සම්බන්ධ',ct_title:'අප හා සම්බන්ධ වන්න',ct_ph:'දුරකතනය',ct_em:'විද්‍යුත් ලිපිනය',ct_loc:'ස්ථානය',
+  ct_place:'සූරියවැව, දකුණු පළාත, ශ්‍රී ලංකා',ct_org:'සංවිධානය',ct_oname:'98 මිතුරන් · ජීවිත ප්‍රවාහය',
+  ct_find:'අපව සොයා ගන්න',ct_map:'සූරියවැව, ශ්‍රී ලංකා',ct_map_btn:'සිතියමේ විවෘත',
+  ct_note:'සියළු රුධිර කාණ්ඩවල දායකයන් ආදරයෙන් පිළිගනිමු.',
+  ft_tag:'98 මිතුරන් විසින්, සූරියවැව, ශ්‍රී ලංකා.\nජීවිතයක් ජීවිතකින් රැකෙයි.',
+  ft_ql:'ප්‍රධාන සබැඳි',ft_more:'තවත්',
+  ft_cp:'© 2024 ජීවිත ප්‍රවාහය · 98 මිතුරන් · සූරියවැව.',
+  wa_t:'ලියාපදිංචිය සාර්ථකයි!',
+  wa_d:'ජීවිත ප්‍රවාහය රුධිර දායකයෙකු ලෙස ලියාපදිංචි වීමට ස්තූතිය! WhatsApp කණ්ඩායමට සම්බන්ධ වන්න.',
+  wa_join:'WhatsApp කණ්ඩායමට සම්බන්ධ',wa_sms:'📱 ඔබට SMS ලැබෙනු ඇත. ස්තූතිය!'
+}};
+
+let lang = 'en';
+function toggleLang(){
+  lang = lang==='en'?'si':'en';
+  document.getElementById('lbtn').textContent = lang==='en'?'සිං':'ENG';
+  document.documentElement.lang = lang==='en'?'en':'si';
+  applyTR();
+}
+function applyTR(){
+  const t=TR[lang];
+  document.querySelectorAll('[data-t]').forEach(el=>{
+    const k=el.getAttribute('data-t');
+    if(t[k]!==undefined) el.textContent=t[k];
+  });
+}
+function tr(k){ return TR[lang][k]||TR.en[k]||k; }
+
+// ╔══════════════════════════════════════════════════════╗
+// ║  THEME                                                ║
+// ╚══════════════════════════════════════════════════════╝
+function toggleTheme(){
+  const html=document.documentElement;
+  const dark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',dark?'light':'dark');
+  document.getElementById('thbtn').textContent=dark?'🌞':'🌙';
+}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║  THREE.JS 3D HERO                                     ║
+// ╚══════════════════════════════════════════════════════╝
+function initThreeJS(){
+  const canvas=document.getElementById('c3d');
+  if(!canvas||typeof THREE==='undefined') return;
+  const W=window.innerWidth, H=window.innerHeight;
+  const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+  renderer.setSize(W,H); renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  const scene=new THREE.Scene();
+  const cam=new THREE.PerspectiveCamera(60,W/H,0.1,1000);
+  cam.position.z=28;
+
+  // Blood cell particle globe
+  const N=2800, pos=new Float32Array(N*3), col=new Float32Array(N*3);
+  for(let i=0;i<N;i++){
+    const theta=Math.random()*Math.PI*2, phi=Math.acos(2*Math.random()-1);
+    const r=9+(Math.random()<0.3?0:Math.random()*3);
+    pos[i*3]=r*Math.sin(phi)*Math.cos(theta);
+    pos[i*3+1]=r*Math.sin(phi)*Math.sin(theta);
+    pos[i*3+2]=r*Math.cos(phi);
+    const shade=0.55+Math.random()*0.45;
+    col[i*3]=shade; col[i*3+1]=Math.random()*0.06; col[i*3+2]=Math.random()*0.06;
+  }
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  g.setAttribute('color',new THREE.BufferAttribute(col,3));
+  const m=new THREE.PointsMaterial({size:0.28,vertexColors:true,transparent:true,opacity:0.82});
+  const pts=new THREE.Points(g,m);
+  scene.add(pts);
+
+  // Wireframe heart sphere at center
+  const cg=new THREE.SphereGeometry(1.8,24,24);
+  const cm2=new THREE.MeshBasicMaterial({color:0xDC143C,wireframe:true,transparent:true,opacity:0.15});
+  const core=new THREE.Mesh(cg,cm2);
+  scene.add(core);
+
+  // Ring
+  const rg=new THREE.TorusGeometry(12,0.08,8,80);
+  const rm=new THREE.MeshBasicMaterial({color:0xDC143C,transparent:true,opacity:0.25});
+  const ring=new THREE.Mesh(rg,rm);
+  ring.rotation.x=Math.PI/3;
+  scene.add(ring);
+
+  let mx=0,my=0,t=0;
+  document.addEventListener('mousemove',e=>{mx=(e.clientX/W-0.5)*2;my=-(e.clientY/H-0.5)*2;});
+
+  (function anim(){
+    requestAnimationFrame(anim);
+    t+=0.006;
+    // Heartbeat
+    const beat=1+0.12*Math.abs(Math.sin(t*4.5))*Math.exp(-((t*4.5)%1)*2.5);
+    pts.rotation.y=t*0.08+mx*0.45;
+    pts.rotation.x=my*0.25;
+    core.scale.setScalar(beat);
+    cm2.opacity=0.08+0.12*Math.abs(Math.sin(t*4.5));
+    ring.rotation.z=t*0.04;
+    m.opacity=0.68+0.14*Math.sin(t*1.8);
+    renderer.render(scene,cam);
+  })();
+
+  window.addEventListener('resize',()=>{
+    const W2=window.innerWidth,H2=window.innerHeight;
+    renderer.setSize(W2,H2); cam.aspect=W2/H2; cam.updateProjectionMatrix();
+  });
+}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║  PARTICLES                                            ║
+// ╚══════════════════════════════════════════════════════╝
+function initParticles(){
+  const bg=document.getElementById('ptc');
+  for(let i=0;i<12;i++){
+    const p=document.createElement('div'); p.className='p';
+    const sz=3+Math.random()*7;
+    p.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;animation-duration:${9+Math.random()*14}s;animation-delay:${Math.random()*12}s;`;
+    bg.appendChild(p);
+  }
+}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║  SCROLL REVEAL                                        ║
+// ╚══════════════════════════════════════════════════════╝
+function initReveal(){
+  const ob=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('vi');});},{threshold:0.1});
+  document.querySelectorAll('.rv,.rl,.rr').forEach(el=>ob.observe(el));
+}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║  NAV ACTIVE                                           ║
+// ╚══════════════════════════════════════════════════════╝
+function initNavActive(){
+  const secs=document.querySelectorAll('section[id]');
+  const links=document.querySelectorAll('.nav-links a');
+  const ob=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){links.forEach(l=>l.classList.remove('active'));const l=document.querySelector(`.nav-links a[href="#${x.target.id}"]`);if(l)l.classList.add('active');}});},{threshold:0.4});
+  secs.forEach(s=>ob.observe(s));
+}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║  REGISTRATION                                         ║
+// ╚══════════════════════════════════════════════════════╝
+async function submitReg(e){
+  e.preventDefault();
+  const f=e.target;
+  const donor={
+    id:Date.now().toString(),
+    fullName:f.fullName.value.trim(),
+    email:f.email.value.trim(),
+    sex:f.sex.value,
+    contactNumber:f.contactNumber.value.trim(),
+    whatsappNumber:f.whatsappNumber.value.trim(),
+    address:f.address.value.trim(),
+    nic:f.nic.value.trim(),
+    weight:f.weight.value,
+    bloodType:f.bloodType.value,
+    regDate:f.regDate.value,
+    regYear: f.regDate.value ? parseInt(f.regDate.value.split('-')[0]) : new Date().getFullYear(),
+    createdAt:new Date().toISOString()
+  };
+  const donors=get('donors');
+  if(donors.find(d=>d.nic===donor.nic)){alert('A donor with this NIC is already registered!');return;}
+
+  try{
+    await fbAdd('donors', donor);
+    showSyncStatus('Donor registered & synced! 🔄');
+  }catch(e){
+    console.warn('donor save err',e);
+    donors.push({...donor,id:Date.now().toString()});
+    set('donors',donors);
+  }
+  updateStats();
+  f.reset();
+  document.getElementById('reg-date').value=new Date().toISOString().split('T')[0];
+  openModal('wa-modal');
+}
+
+function joinWA(){
+  const s=getS();
+  window.open(s.wa||'https://chat.whatsapp.com/','_blank');
+}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║  EVENT REGISTRATION (PUBLIC)                          ║
+// ╚══════════════════════════════════════════════════════╝
+function openEvReg(evId, title){
+  document.getElementById('ev-reg-eid').value=evId;
+  document.getElementById('ev-reg-title').textContent='Register for: '+title;
+  // Reset all fields
+  ['evr-lookup','evr-name','evr-contact','evr-wa','evr-email','evr-addr'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  ['evr-sex','evr-bt'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  const notice=document.getElementById('evr-autofill-notice');
+  const msg=document.getElementById('evr-lookup-msg');
+  if(notice) notice.style.display='none';
+  if(msg){ msg.style.display='none'; msg.textContent=''; }
+  openModal('ev-reg-ov');
+}
+
+// Auto-fill by PHONE NUMBER or NIC NUMBER
+function evRegAutoFill(){
+  const lookup=document.getElementById('evr-lookup').value.trim().replace(/\s/g,'');
+  const notice=document.getElementById('evr-autofill-notice');
+  const msg=document.getElementById('evr-lookup-msg');
+
+  if(lookup.length < 5){
+    msg.style.display='block';
+    msg.style.color='#ffaa44';
+    msg.textContent='⚠️ Enter at least 5 characters of your phone or NIC number.';
+    notice.style.display='none';
+    return;
+  }
+
+  const donors=get('donors');
+  // Match by phone number (contact or whatsapp) OR NIC
+  const match=donors.find(d=>{
+    const phone=(d.contactNumber||'').replace(/\s/g,'');
+    const wa=(d.whatsappNumber||'').replace(/\s/g,'');
+    const nic=(d.nic||'').replace(/\s/g,'').toLowerCase();
+    const q=lookup.toLowerCase();
+    return phone.includes(q) || phone.endsWith(q) ||
+           wa.includes(q) || wa.endsWith(q) ||
+           nic===q || nic.includes(q);
+  });
+
+  if(match){
+    document.getElementById('evr-name').value=match.fullName||'';
+    document.getElementById('evr-contact').value=match.contactNumber||'';
+    document.getElementById('evr-wa').value=match.whatsappNumber||'';
+    document.getElementById('evr-email').value=match.email||'';
+    document.getElementById('evr-addr').value=match.address||'';
+    document.getElementById('evr-sex').value=match.sex||'';
+    document.getElementById('evr-bt').value=match.bloodType||'';
+    notice.style.display='block';
+    msg.style.display='block';
+    msg.style.color='#25D366';
+    msg.textContent='✅ Found: '+match.fullName+' ('+match.bloodType+') — details filled in!';
+  } else {
+    notice.style.display='none';
+    msg.style.display='block';
+    msg.style.color='#ff8844';
+    msg.textContent='ℹ️ Not found in donor registry. Please fill in your details below manually.';
+  }
+}
+
+// Also allow pressing Enter in lookup box
+document.addEventListener('DOMContentLoaded',()=>{
+  const lk=document.getElementById('evr-lookup');
+  if(lk) lk.addEventListener('keypress',e=>{ if(e.key==='Enter'){e.preventDefault();evRegAutoFill();} });
+});
+
+async function submitEvReg(){
+  const evId=document.getElementById('ev-reg-eid').value;
+  const name=document.getElementById('evr-name').value.trim();
+  const sex=document.getElementById('evr-sex').value;
+  const contact=document.getElementById('evr-contact').value.trim();
+  const wa=document.getElementById('evr-wa').value.trim();
+  const bt=document.getElementById('evr-bt').value;
+  const email=document.getElementById('evr-email').value.trim();
+  const addr=document.getElementById('evr-addr').value.trim();
+
+  if(!name){alert('Please enter your full name');return;}
+  if(!contact){alert('Please enter your phone number');return;}
+  if(!addr){alert('Please enter your address');return;}
+
+  // Prevent duplicate registration for same event
+  const evRegs=get('evRegs');
+  if(evRegs.find(r=>r.evId===evId&&(
+    r.name.toLowerCase()===name.toLowerCase()||
+    (r.contact&&r.contact.replace(/\s/g,'')===contact.replace(/\s/g,''))
+  ))){
+    alert('You are already registered for this event!');
+    return;
+  }
+
+  // Check if already a registered donor
+  const donors=get('donors');
+  const isDonor=!!donors.find(d=>
+    d.fullName.toLowerCase()===name.toLowerCase()||
+    (d.contactNumber||'').replace(/\s/g,'')===contact.replace(/\s/g,'')
+  );
+
+  const reg={evId,name,sex,contact,whatsapp:wa,bloodType:bt,email,address:addr,isDonor,manual:false,regAt:new Date().toISOString(),createdAt:new Date().toISOString()};
+
+  try{
+    await fbAdd('evRegs', reg);
+    showSyncStatus('Event registration saved! 🔄');
+  }catch(e){
+    console.warn('evReg save err',e);
+    // local fallback
+    evRegs.push({...reg, id:Date.now().toString()});
+    set('evRegs', evRegs);
+  }
+
+  closeModal('ev-reg-ov');
+
+  // WhatsApp group invite
+  const s=getS();
+  if(s.wa){
+    if(confirm('✅ Registration successful!\n\nWould you like to join our WhatsApp group for event updates?')){
+      window.open(s.wa,'_blank');
+    }
+  } else {
+    alert('✅ You are registered for this event! See you there! 🩸');
+  }
+}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║  COMMENTS                                             ║
+// ╚══════════════════════════════════════════════════════╝
+async function submitComment(){
+  const name=document.getElementById('cm-name').value.trim();
+  const bt=document.getElementById('cm-bt').value;
+  const txt=document.getElementById('cm-txt').value.trim();
+  if(!name||!txt){alert('Please enter your name and comment.');return;}
+  const entry={name,bt,txt,date:new Date().toISOString(),createdAt:new Date().toISOString()};
+  try{
+    await fbAdd('comments', entry);
+    showSyncStatus('Comment posted! 🔄');
+  }catch(e){
+    const cms=get('comments');
+    cms.unshift({...entry,id:Date.now().toString()});
+    set('comments',cms);
+    renderComments();
+  }
+  document.getElementById('cm-name').value='';
+  document.getElementById('cm-bt').value='';
+  document.getElementById('cm-txt').value='';
+}
+
+function renderComments(){
+  const el=document.getElementById('cm-list');
+  const cms=get('comments');
+  el.innerHTML=cms.length?cms.map(c=>`
+    <div class="cm-item">
+      <div class="cm-hdr">
+        <div class="cm-name">🩸 ${esc(c.name)}${c.bt?` <span style="background:rgba(220,20,60,.13);border-radius:8px;padding:1px 7px;font-size:.68rem;">${c.bt}</span>`:''}</div>
+        <div class="cm-date">${fmtD(c.date)}</div>
+      </div>
+      <div class="cm-text">${esc(c.txt)}</div>
+    </div>`).join(''):'<p style="color:var(--txt3);text-align:center;padding:18px;">No comments yet. Be the first!</p>';
+}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║  EVENTS RENDER                                        ║
+// ╚══════════════════════════════════════════════════════╝
+function renderEvents(){
+  const g=document.getElementById('ev-grid');
+  const evs=get('upcomingEvents');
+  if(!evs.length){g.innerHTML=`<div class="no-ev">${tr('no_ev')}</div>`;return;}
+  g.innerHTML=evs.map(ev=>{
+    const d=ev.date?new Date(ev.date):null;
+    const evRegs=get('evRegs').filter(r=>r.evId===ev.id);
+    return `
+    <div class="ev-card">
+      <div class="ev-top">
+        <div class="ev-db">
+          <div class="ev-day">${d?String(d.getDate()).padStart(2,'0'):'—'}</div>
+          <div class="ev-mon">${d?d.toLocaleString('en',{month:'short'}).toUpperCase():'—'}</div>
+        </div>
+        <div class="ev-title">${esc(ev.title)}</div>
+      </div>
+      <div class="ev-body">
+        <div class="ev-meta">
+          ${ev.time?`<div class="ev-mr">🕐 ${ev.time}</div>`:''}
+          ${ev.location?`<div class="ev-mr">📍 ${esc(ev.location)}</div>`:''}
+          ${ev.description?`<div class="ev-mr" style="font-style:italic;">📝 ${esc(ev.description)}</div>`:''}
+          <div class="ev-mr">👥 ${evRegs.length} registered for this event</div>
+        </div>
+        ${ev.gifts&&ev.gifts.length?`<div class="ev-gifts"><div class="ev-gt">🎁 Annual Gifts</div><div class="gifts-row">${ev.gifts.map(g=>`<span class="gtag">🎁 ${esc(g)}</span>`).join('')}</div></div>`:''}
+        <div style="display:flex;gap:8px;margin-top:14px;">
+          <button class="btn btn-p btn-sm" onclick="openEvReg('${ev.id}','${esc(ev.title)}')">✍️ Register for Event</button>
+          <a href="#register" class="btn btn-o btn-sm" style="text-decoration:none;">Become Donor</a>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderPastEvents(){
+  const el=document.getElementById('pe-list');
+  const evs=get('pastEvents');
+  if(!evs.length){el.innerHTML=`<div class="no-ev">${tr('no_pe')}</div>`;return;}
+  el.innerHTML=evs.map((ev,i)=>{
+    const mems=ev.memories||[];
+    const evRegs=get('evRegs').filter(r=>r.evId===ev.id);
+    return `
+    <div class="pe-card">
+      <div class="pe-hdr" onclick="togPE('peb-${i}','pea-${i}')">
+        <div class="pe-hdr-l">
+          <div class="pe-hdr-t">📅 ${esc(ev.title)}</div>
+          <div class="pe-hdr-m">${ev.date?fmtD(ev.date):ev.year?ev.year:''} · ${ev.donorsCount||0} donors · ${mems.length} memories</div>
+        </div>
+        <div style="color:var(--p);font-size:1.1rem;" id="pea-${i}">▼</div>
+      </div>
+      <div class="pe-body" id="peb-${i}">
+        ${ev.description?`<p style="color:var(--txt2);line-height:1.7;margin-bottom:16px;font-size:.9rem;">${esc(ev.description)}</p>`:''}
+        ${ev.gifts&&ev.gifts.length?`<div style="margin-bottom:14px;"><div class="ev-gt">🎁 Gifts Given</div><div class="gifts-row">${ev.gifts.map(g=>`<span class="gtag">🎁 ${esc(g)}</span>`).join('')}</div></div>`:''}
+        <div class="pe-stats">
+          ${ev.donorsCount?`<div class="pe-s"><div class="n">${ev.donorsCount}</div><div class="l">Donors</div></div>`:''}
+          ${ev.bloodCollected?`<div class="pe-s"><div class="n">${ev.bloodCollected}</div><div class="l">Units</div></div>`:''}
+          ${evRegs.length?`<div class="pe-s"><div class="n">${evRegs.length}</div><div class="l">Registered</div></div>`:''}
+        </div>
+        ${mems.length?`<div style="margin-top:16px;"><div class="ev-gt" style="margin-bottom:10px;">📸 Memories</div><div class="mem-grid">${mems.map(m=>m.type&&m.type.startsWith('video')?`<div class="mem-item" onclick="openLB('video','${m.data}')"><video src="${m.data}" style="width:100%;height:100%;object-fit:cover;" muted></video></div>`:`<div class="mem-item" onclick="openLB('img','${m.data}')"><img src="${m.data}" alt="Memory" loading="lazy"></div>`).join('')}</div></div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function togPE(bid,aid){
+  const b=document.getElementById(bid);
+  const a=document.getElementById(aid);
+  const open=b.classList.toggle('open');
+  if(a) a.textContent=open?'▲':'▼';
+}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║  COMMITTEE                                            ║
+// ╚══════════════════════════════════════════════════════╝
+function renderCommittee(){
+  const g=document.getElementById('oc-grid');
+  const members=get('ocMembers');
+  if(!members.length){g.innerHTML=`<div class="no-ev" style="grid-column:1/-1;">${tr('no_oc')}</div>`;return;}
+  g.innerHTML=members.map((m,i)=>`
+    <div class="oc-card" onclick="showOCDetail(${i})">
+      ${m.photo?`<img class="oc-ph" src="${m.photo}" alt="${esc(m.name)}">`:`<div class="oc-ph-p">👤</div>`}
+      <div class="oc-nm">${esc(m.name)}</div>
+      <div class="oc-rl">${esc(m.role||'Member')}</div>
+      <div class="oc-yr">${m.joinedYear?'Since '+m.joinedYear:''}</div>
+    </div>`).join('');
+}
+
+function showOCDetail(i){
+  const m=get('ocMembers')[i];if(!m)return;
+  document.getElementById('oc-detail').innerHTML=`
+    <div style="text-align:center;margin-bottom:16px;">
+      ${m.photo?`<img style="width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid var(--p);margin:0 auto 14px;display:block;" src="${m.photo}">`:`<div style="width:110px;height:110px;border-radius:50%;background:var(--bg3);border:3px solid var(--cb);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;">👤</div>`}
+      <h2 style="font-family:'Cinzel',serif;font-size:1.2rem;color:var(--p);">${esc(m.name)}</h2>
+      <div style="font-size:.78rem;color:var(--acc);font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-top:3px;">${esc(m.role||'Member')}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      ${m.phone?`<div style="display:flex;gap:10px;"><span style="font-size:.74rem;color:var(--txt3);width:70px;">📞 Phone</span><span style="color:var(--txt2);font-size:.88rem;">${esc(m.phone)}</span></div>`:''}
+      ${m.email?`<div style="display:flex;gap:10px;"><span style="font-size:.74rem;color:var(--txt3);width:70px;">📧 Email</span><span style="color:var(--txt2);font-size:.88rem;">${esc(m.email)}</span></div>`:''}
+      ${m.joinedYear?`<div style="display:flex;gap:10px;"><span style="font-size:.74rem;color:var(--txt3);width:70px;">📅 Since</span><span style="color:var(--txt2);font-size:.88rem;">${m.joinedYear}</span></div>`:''}
+      ${m.bio?`<div style="display:flex;gap:10px;"><span style="font-size:.74rem;color:var(--txt3);width:70px;">ℹ️ Bio</span><span style="color:var(--txt2);font-size:.88rem;line-height:1.5;">${esc(m.bio)}</span></div>`:''}
+    </div>`;
+  openModal('oc-modal');
+}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║  STATS                                                ║
+// ╚══════════════════════════════════════════════════════╝
+function updateStats(){
+  const donors=get('donors');
+  const evs=get('upcomingEvents');
+  const past=get('pastEvents');
+  const s=getS();
+  const totalBlood=past.reduce((a,e)=>a+(parseInt(e.bloodCollected)||0),0);
+  const lives=s.lives||Math.floor(totalBlood*2.8);
+  ctr('st-donors',donors.length);
+  ctr('st-events',evs.length+past.length);
+  ctr('st-lives',lives);
+}
+function ctr(id,target){
+  const el=document.getElementById(id);if(!el)return;
+  let cur=0; const step=Math.max(1,Math.ceil(target/35));
+  const t=setInterval(()=>{cur=Math.min(cur+step,target);el.textContent=cur;if(cur>=target)clearInterval(t);},50);
+}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║  MODALS / LIGHTBOX                                    ║
+// ╚══════════════════════════════════════════════════════╝
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function openLB(type,src){
+  const c=document.getElementById('lb-con');
+  c.innerHTML=type==='video'?`<video src="${src}" controls autoplay style="max-width:92vw;max-height:92vh;border-radius:12px;"></video>`:`<img src="${src}" alt="Memory" style="max-width:92vw;max-height:92vh;border-radius:12px;">`;
+  document.getElementById('lb').classList.add('open');
+}
+function closeLB(){document.getElementById('lb').classList.remove('open');}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║  ADMIN AUTH                                           ║
+// ╚══════════════════════════════════════════════════════╝
+function openAdminLogin(){openModal('adm-login-ov');document.getElementById('adm-pw').value='';document.getElementById('adm-err').style.display='none';}
+function adminLogin(){
+  const s=getS();
+  const activePw=window._runtimeAdminPass||s.adminPassword||ADM_PASS;
+  if(document.getElementById('adm-pw').value===activePw){
+    closeModal('adm-login-ov');
+    document.getElementById('adm').classList.add('open');
+    document.body.style.overflow='hidden';
+    renderAdminDash();
+    loadAdminProfile();
+  } else {
+    document.getElementById('adm-err').style.display='block';
+  }
+}
+function closeAdmin(){
+  document.getElementById('adm').classList.remove('open');
+  document.body.style.overflow='';
+  renderAll();
+}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║  ADMIN SECTIONS                                       ║
+// ╚══════════════════════════════════════════════════════╝
+function showAS(name, el){
+  document.querySelectorAll('.as').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.si').forEach(s=>s.classList.remove('active'));
+  document.getElementById('as-'+name).classList.add('active');
+  el.classList.add('active');
+  switch(name){
+    case 'dashboard': renderAdminDash(); break;
+    case 'donors': renderAdminDonors(); break;
+    case 'evregs': renderAdminEvRegs(); break;
+    case 'events': renderAdminEvents(); break;
+    case 'past': renderAdminPast(); break;
+    case 'memories': renderAdminMems(); break;
+    case 'committee': renderAdminOC(); break;
+    case 'budget': renderBudget(); initBudgetYears(); break;
+    case 'sms': renderSMS(); break;
+    case 'settings': loadSettings(); loadAdminProfile(); break;
+  }
+}
+
+// ── DASHBOARD ──
+function renderAdminDash(){
+  const donors=get('donors'), evs=get('upcomingEvents'), past=get('pastEvents'),
+    cms=get('comments'), members=get('ocMembers'), evRegs=get('evRegs');
+  document.getElementById('dash-stats').innerHTML=`
+    <div class="sc"><div class="n">${donors.length}</div><div class="l">Registered Donors</div></div>
+    <div class="sc"><div class="n">${evs.length}</div><div class="l">Upcoming Events</div></div>
+    <div class="sc"><div class="n">${past.length}</div><div class="l">Past Events</div></div>
+    <div class="sc"><div class="n">${evRegs.length}</div><div class="l">Event Registrations</div></div>
+    <div class="sc"><div class="n">${members.length}</div><div class="l">OC Members</div></div>
+    <div class="sc"><div class="n">${cms.length}</div><div class="l">Comments</div></div>
+    <div class="sc"><div class="n">${past.reduce((a,e)=>a+(parseInt(e.donorsCount)||0),0)}</div><div class="l">Total Donors (All Events)</div></div>
+    <div class="sc"><div class="n">${past.reduce((a,e)=>a+(parseInt(e.bloodCollected)||0),0)}</div><div class="l">Blood Units Collected</div></div>`;
+  const bc={};donors.forEach(d=>{bc[d.bloodType]=(bc[d.bloodType]||0)+1;});
+  document.getElementById('bt-dist').innerHTML=Object.entries(bc).map(([t,n])=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--cb);">
+      <span style="font-weight:700;color:var(--p);width:36px;">${t}</span>
+      <div style="flex:1;height:7px;background:var(--bg3);border-radius:4px;overflow:hidden;"><div style="background:var(--p);height:100%;width:${Math.round(n/Math.max(donors.length,1)*100)}%;border-radius:4px;"></div></div>
+      <span style="font-size:.82rem;color:var(--txt2);">${n}</span>
+    </div>`).join('')||'<p style="color:var(--txt3);">No donors yet</p>';
+  document.getElementById('dash-ev').innerHTML=evs.slice(0,3).map(e=>`<div style="padding:9px 0;border-bottom:1px solid var(--cb);"><div style="font-weight:600;font-size:.88rem;">${esc(e.title)}</div><div style="font-size:.78rem;color:var(--txt3);">${e.date||'TBD'} · ${e.location||'TBD'}</div></div>`).join('')||'<p style="color:var(--txt3);">None</p>';
+  document.getElementById('dash-cm').innerHTML=get('comments').slice(0,3).map(c=>`<div style="padding:9px 0;border-bottom:1px solid var(--cb);"><div style="font-weight:600;color:var(--p);font-size:.86rem;">${esc(c.name)}</div><div style="font-size:.82rem;color:var(--txt2);">${esc(c.txt)}</div></div>`).join('')||'<p style="color:var(--txt3);">None</p>';
+}
+
+// ── DONORS (sorted by year) ──
+let dSearch='', dYearFilter='', dSortCol='', dSortDir=1;
+
+function sortDonors(col){
+  if(dSortCol===col) dSortDir*=-1; else{dSortCol=col;dSortDir=1;}
+  // Update header arrows
+  document.querySelectorAll('th.srt').forEach(th=>{th.classList.remove('sa','sd');if(th.dataset.sc===col)th.classList.add(dSortDir===1?'sa':'sd');});
+  filterDonors();
+}
+
+function renderAdminDonors(){
+  // Populate year filter
+  const donors=get('donors');
+  const years=[...new Set(donors.map(d=>d.regYear||new Date(d.createdAt||'2024').getFullYear()))].sort((a,b)=>b-a);
+  const sel=document.getElementById('d-yr-filter');
+  sel.innerHTML='<option value="">All Years</option>'+years.map(y=>`<option value="${y}">${y}</option>`).join('');
+  filterDonors();
+}
+
+function filterDonors(){
+  dSearch=(document.getElementById('d-srch')||{}).value||'';
+  dYearFilter=(document.getElementById('d-yr-filter')||{}).value||'';
+  const q=dSearch.toLowerCase();
+  let donors=get('donors');
+  if(q) donors=donors.filter(d=>d.fullName.toLowerCase().includes(q)||d.bloodType.toLowerCase().includes(q)||(d.nic||'').toLowerCase().includes(q)||(d.contactNumber||'').includes(q));
+  if(dYearFilter) donors=donors.filter(d=>(d.regYear||parseInt((d.regDate||'').split('-')[0])||new Date(d.createdAt||'').getFullYear())==parseInt(dYearFilter));
+
+  // Sort
+  if(dSortCol){
+    donors=donors.slice().sort((a,b)=>{
+      let av=a[dSortCol]||'', bv=b[dSortCol]||'';
+      if(!isNaN(parseFloat(av))&&!isNaN(parseFloat(bv))){av=parseFloat(av);bv=parseFloat(bv);}
+      else{av=String(av).toLowerCase();bv=String(bv).toLowerCase();}
+      return av>bv?dSortDir:av<bv?-dSortDir:0;
+    });
+  }
+
+  // Group by year
+  const byYear={};
+  donors.forEach(d=>{
+    const yr=d.regYear||parseInt((d.regDate||'').split('-')[0])||new Date(d.createdAt||'').getFullYear();
+    if(!byYear[yr]) byYear[yr]=[];
+    byYear[yr].push(d);
+  });
+
+  const con=document.getElementById('donors-by-year');
+  if(!donors.length){con.innerHTML='<p style="color:var(--txt3);padding:18px;">No donors found.</p>';return;}
+
+  const TH=(col,label)=>`<th class="srt${dSortCol===col?(dSortDir===1?' sa':' sd'):''}" data-sc="${col}" onclick="sortDonors('${col}')">${label}</th>`;
+
+  con.innerHTML=Object.entries(byYear).sort((a,b)=>b[0]-a[0]).map(([yr,dList])=>`
+    <div class="yr-grp">
+      <div class="yr-grp-hdr">📅 ${yr} <span style="background:rgba(220,20,60,.14);border-radius:20px;padding:2px 10px;font-size:.76rem;font-family:'Nunito Sans',sans-serif;">${dList.length} donors</span></div>
+      <div class="atw">
+        <table>
+          <thead><tr><th>#</th>${TH('fullName','Name')}${TH('bloodType','Blood')}${TH('sex','Sex')}${TH('contactNumber','Contact')}${TH('whatsappNumber','WhatsApp')}${TH('nic','NIC')}${TH('weight','Weight')}${TH('email','Email')}<th>Address</th>${TH('regDate','Reg Date')}<th>Action</th></tr></thead>
+          <tbody>${dList.map((d,i)=>`<tr>
+            <td>${i+1}</td><td><strong>${esc(d.fullName)}</strong></td>
+            <td><span class="bdg bdg-r">${d.bloodType}</span></td>
+            <td>${d.sex}</td><td>${esc(d.contactNumber)}</td><td>${esc(d.whatsappNumber)}</td>
+            <td>${esc(d.nic)}</td><td>${d.weight} kg</td><td>${esc(d.email)}</td>
+            <td style="max-width:130px;white-space:normal;">${esc(d.address)}</td>
+            <td>${d.regDate||fmtD(d.createdAt)}</td>
+            <td><button class="btn btn-d btn-sm" onclick="delDonor('${d.id}')">Del</button></td>
+          </tr>`).join('')}</tbody>
+        </table>
+      </div>
+    </div>`).join('');
+}
+
+async function delDonor(id){
+  if(!confirm('Delete this donor?')) return;
+  await fbDel('donors', id);
+  filterDonors(); updateStats();
+  showSyncStatus('Donor deleted 🔄');
+}
+async function clearDonors(){
+  if(!confirm('Clear ALL donor records? Cannot be undone.')) return;
+  const donors=get('donors');
+  for(const d of donors){ try{await fbDel('donors',d.id);}catch{} }
+  _cache.donors=[];
+  filterDonors(); updateStats();
+  showSyncStatus('All donors cleared 🔄');
+}
+
+// EXPORT
+function expPDF(){
+  const {jsPDF}=window.jspdf; const doc=new jsPDF();
+  doc.setFontSize(16); doc.setTextColor(220,20,60);
+  doc.text('Life Flow — Blood Donors List',14,18);
+  doc.setFontSize(9); doc.setTextColor(100,100,100);
+  doc.text('98 Friends | Sooriyawewa, Sri Lanka | '+new Date().toLocaleDateString(),14,26);
+  const donors=get('donors');
+  doc.autoTable({startY:32,head:[['#','Name','Blood','Sex','Contact','NIC','Weight','Email','Reg Date']],
+    body:donors.map((d,i)=>[i+1,d.fullName,d.bloodType,d.sex,d.contactNumber,d.nic,d.weight+'kg',d.email,d.regDate||fmtD(d.createdAt)]),
+    styles:{fontSize:7.5},headStyles:{fillColor:[220,20,60]},alternateRowStyles:{fillColor:[255,248,248]}});
+  doc.save('LifeFlow_Donors_'+new Date().toISOString().slice(0,10)+'.pdf');
+}
+function expXLSX(){
+  const donors=get('donors');
+  const ws=XLSX.utils.json_to_sheet(donors.map((d,i)=>({'#':i+1,'Name':d.fullName,'Blood Type':d.bloodType,'Sex':d.sex,'Contact':d.contactNumber,'WhatsApp':d.whatsappNumber,'NIC':d.nic,'Weight (kg)':d.weight,'Email':d.email,'Address':d.address,'Registration Date':d.regDate||fmtD(d.createdAt),'Year':d.regYear})));
+  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Donors');
+  XLSX.writeFile(wb,'LifeFlow_Donors_'+new Date().toISOString().slice(0,10)+'.xlsx');
+}
+function expTXT(){
+  const donors=get('donors');
+  const lines=['LIFE FLOW — BLOOD DONORS','98 Friends | Sooriyawewa, Sri Lanka','Generated: '+new Date().toLocaleString(),'='.repeat(60),...donors.map((d,i)=>`${i+1}. ${d.fullName} | ${d.bloodType} | ${d.sex} | ${d.contactNumber} | ${d.nic} | ${d.weight}kg | ${d.regDate||fmtD(d.createdAt)}`)];
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/plain'}));a.download='LifeFlow_Donors.txt';a.click();
+}
+
+// ── EVENT REGISTRATIONS ──
+function renderAdminEvRegs(){
+  // Populate event selects
+  const allEvs=[...get('upcomingEvents'),...get('pastEvents')];
+  ['evr-sel','man-ev-sel'].forEach(selId=>{
+    const sel=document.getElementById(selId);
+    if(sel) sel.innerHTML='<option value="">— Select event —</option>'+allEvs.map(e=>`<option value="${e.id}">${esc(e.title)} (${e.date||e.year||'TBD'})</option>`).join('');
+  });
+}
+
+function showEvRegs(){
+  const evId=document.getElementById('evr-sel').value;
+  const el=document.getElementById('evr-list');
+  const exportRow=document.getElementById('evr-export-row');
+  const exportLabel=document.getElementById('evr-export-label');
+  if(!evId){el.innerHTML='';exportRow.style.display='none';return;}
+  const regs=get('evRegs').filter(r=>r.evId===evId);
+  if(!regs.length){
+    el.innerHTML='<p style="color:var(--txt3);">No registrations for this event yet.</p>';
+    exportRow.style.display='none';
+    return;
+  }
+  exportRow.style.display='flex';
+  exportLabel.textContent=regs.length+' records';
+  el.innerHTML=`<div class="atw"><table><thead><tr><th>#</th><th>Name</th><th>Sex</th><th>Blood</th><th>Contact</th><th>WhatsApp</th><th>Email</th><th>Address</th><th>NIC</th><th>Entry</th><th>Notes</th><th>Date</th><th>Del</th></tr></thead><tbody>${regs.map((r,i)=>`<tr><td>${i+1}</td><td><strong>${esc(r.name)}</strong></td><td>${r.sex||'—'}</td><td><span class="bdg bdg-r">${r.bloodType||'—'}</span></td><td>${esc(r.contact||'—')}</td><td>${esc(r.whatsapp||'—')}</td><td>${esc(r.email||'—')}</td><td style="max-width:120px;white-space:normal;">${esc(r.address||'—')}</td><td>${esc(r.nic||'—')}</td><td><span class="bdg ${r.manual?'bdg-y':'bdg-g'}">${r.manual?'Manual':'Online'}</span></td><td style="max-width:100px;white-space:normal;">${esc(r.notes||'—')}</td><td>${fmtD(r.regAt)}</td><td><button class="btn btn-d btn-sm" onclick="delEvReg('${r.id}')">Del</button></td></tr>`).join('')}</tbody></table></div><div style="margin-top:10px;font-size:.82rem;color:var(--txt3);">Total: <strong>${regs.length}</strong> &nbsp;|&nbsp; Manual: <strong>${regs.filter(r=>r.manual).length}</strong> &nbsp;|&nbsp; Online: <strong>${regs.filter(r=>!r.manual).length}</strong></div>`;
+}
+
+// ── EVENT REGISTRATION EXPORTS ──
+function _getEvRegData(){
+  const evId=document.getElementById('evr-sel').value;
+  if(!evId)return{evTitle:'',regs:[]};
+  const allEvs=[...get('upcomingEvents'),...get('pastEvents')];
+  const ev=allEvs.find(e=>e.id===evId);
+  const regs=get('evRegs').filter(r=>r.evId===evId);
+  return{evTitle:ev?ev.title:'Event', evDate:ev?(ev.date||ev.year||''):'', regs};
+}
+
+function expEvRegsPDF(){
+  const{evTitle,evDate,regs}=_getEvRegData();
+  if(!regs.length){alert('No registrations to export');return;}
+  const{jsPDF}=window.jspdf;
+  const doc=new jsPDF();
+
+  // Header
+  doc.setFillColor(220,20,60);
+  doc.rect(0,0,210,32,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(18);
+  doc.setFont('helvetica','bold');
+  doc.text('Life Flow — Event Attendance',14,14);
+  doc.setFontSize(10);
+  doc.setFont('helvetica','normal');
+  doc.text('98 Friends | Sooriyawewa, Sri Lanka',14,22);
+  doc.text('Generated: '+new Date().toLocaleString(),14,29);
+
+  // Event info box
+  doc.setFillColor(255,240,240);
+  doc.rect(0,32,210,16,'F');
+  doc.setTextColor(139,0,0);
+  doc.setFontSize(11);
+  doc.setFont('helvetica','bold');
+  doc.text('Event: '+evTitle+(evDate?' | Date: '+evDate:''),14,43);
+
+  // Stats bar
+  const total=regs.length;
+  const manual=regs.filter(r=>r.manual).length;
+  const online=regs.filter(r=>!r.manual).length;
+  doc.setFillColor(245,245,255);
+  doc.rect(0,48,210,12,'F');
+  doc.setTextColor(60,60,80);
+  doc.setFontSize(9);
+  doc.setFont('helvetica','normal');
+  doc.text(`Total Registrations: ${total}   |   Manual (Admin): ${manual}   |   Online: ${online}`,14,56);
+
+  // Table
+  doc.autoTable({
+    startY:62,
+    head:[['#','Name','Blood Type','NIC','Contact','Donor?','Manual?','Notes','Registered Date']],
+    head:[['#','Name','Sex','Blood','Contact','WhatsApp','Email','Address','NIC','Entry','Notes','Date']],
+    body:regs.map((r,i)=>[
+      i+1, r.name, r.sex||'—', r.bloodType||'—', r.contact||'—',
+      r.whatsapp||'—', r.email||'—', r.address||'—', r.nic||'—',
+      r.manual?'Manual (Admin)':'Online', r.notes||'—', fmtD(r.regAt)
+    ]),
+    styles:{fontSize:7,cellPadding:2},
+    headStyles:{fillColor:[220,20,60],textColor:[255,255,255],fontStyle:'bold'},
+    alternateRowStyles:{fillColor:[255,248,248]},
+    columnStyles:{0:{cellWidth:6},1:{cellWidth:24},2:{cellWidth:10},3:{cellWidth:12}},
+    margin:{left:10,right:10}
+  });
+
+  // Footer
+  const pageCount=doc.internal.getNumberOfPages();
+  for(let i=1;i<=pageCount;i++){
+    doc.setPage(i);
+    doc.setFontSize(7);
+    doc.setTextColor(180,180,180);
+    doc.text('Life Flow | 98 Friends | Sooriyawewa, Sri Lanka | 0772628991 | mudushkasuraj1982@gmail.com',14,doc.internal.pageSize.height-8);
+    doc.text(`Page ${i} of ${pageCount}`,196,doc.internal.pageSize.height-8,{align:'right'});
+  }
+
+  const fname='LifeFlow_EventReg_'+evTitle.replace(/[^a-z0-9]/gi,'_').slice(0,30)+'_'+new Date().toISOString().slice(0,10)+'.pdf';
+  doc.save(fname);
+}
+
+function expEvRegsXLSX(){
+  const{evTitle,evDate,regs}=_getEvRegData();
+  if(!regs.length){alert('No registrations to export');return;}
+
+  // Sheet 1: Registrations
+  const wsData=[
+    ['Life Flow — Event Attendance List'],
+    ['98 Friends | Sooriyawewa, Sri Lanka'],
+    ['Event: '+evTitle+(evDate?' | Date: '+evDate:'')],
+    ['Generated: '+new Date().toLocaleString()],
+    [],
+    ['#','Name','Sex','Blood Type','Contact Number','WhatsApp','Email','Address','NIC','Entry Type','Notes','Registered Donor?','Registration Date']
+  ];
+  regs.forEach((r,i)=>wsData.push([
+    i+1, r.name, r.sex||'—', r.bloodType||'—', r.contact||'—',
+    r.whatsapp||'—', r.email||'—', r.address||'—', r.nic||'—',
+    r.manual?'Manual (Admin)':'Online', r.notes||'—',
+    r.isDonor?'Yes':'No', fmtD(r.regAt)
+  ]));
+
+  // Summary sheet data
+  const manual=regs.filter(r=>r.manual).length;
+  const online=regs.filter(r=>!r.manual).length;
+  const byCnt={};regs.forEach(r=>{byCnt[r.bloodType||'Unknown']=(byCnt[r.bloodType||'Unknown']||0)+1;});
+  const summaryData=[
+    ['Life Flow — Summary'],
+    ['Event',evTitle],
+    ['Date',evDate||'—'],
+    [],
+    ['REGISTRATION SUMMARY'],
+    ['Total Registrations',regs.length],
+    ['Manual (Admin entered)',manual],
+    ['Online (Self-registered)',online],
+    [],
+    ['BLOOD TYPE BREAKDOWN'],
+    ['Blood Type','Count'],
+    ...Object.entries(byCnt)
+  ];
+
+  const wb=XLSX.utils.book_new();
+  const ws1=XLSX.utils.aoa_to_sheet(wsData);
+  // Style column widths
+  ws1['!cols']=[{wch:5},{wch:28},{wch:12},{wch:18},{wch:18},{wch:16},{wch:18},{wch:28},{wch:20}];
+  XLSX.utils.book_append_sheet(wb,ws1,'Registrations');
+
+  const ws2=XLSX.utils.aoa_to_sheet(summaryData);
+  ws2['!cols']=[{wch:28},{wch:20}];
+  XLSX.utils.book_append_sheet(wb,ws2,'Summary');
+
+  const fname='LifeFlow_EventReg_'+evTitle.replace(/[^a-z0-9]/gi,'_').slice(0,30)+'_'+new Date().toISOString().slice(0,10)+'.xlsx';
+  XLSX.writeFile(wb,fname);
+}
+
+function expEvRegsTXT(){
+  const{evTitle,evDate,regs}=_getEvRegData();
+  if(!regs.length){alert('No registrations to export');return;}
+  const manual=regs.filter(r=>r.manual).length;
+  const lines=[
+    'LIFE FLOW — EVENT ATTENDANCE LIST',
+    '98 Friends | Sooriyawewa, Sri Lanka',
+    '='.repeat(60),
+    'Event  : '+evTitle,
+    'Date   : '+(evDate||'—'),
+    'Total  : '+regs.length+' registrations',
+    'Manual : '+manual+' (admin entered)',
+    'Online : '+(regs.length-manual)+' (self-registered)',
+    'Export : '+new Date().toLocaleString(),
+    '='.repeat(60),
+    '',
+    ...regs.map((r,i)=>[
+      `${i+1}. ${r.name}`,
+      `   Blood: ${r.bloodType||'—'}  |  NIC: ${r.nic||'—'}  |  Contact: ${r.contact||'—'}`,
+      `   Type: ${r.manual?'Manual (Admin)':'Online'}  |  Donor: ${r.isDonor?'Yes':'No'}  |  Date: ${fmtD(r.regAt)}`,
+      r.notes?`   Notes: ${r.notes}`:'',
+      ''
+    ].filter(Boolean).join('\n'))
+  ];
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/plain'}));
+  a.download='LifeFlow_EventReg_'+evTitle.replace(/[^a-z0-9]/gi,'_').slice(0,30)+'.txt';
+  a.click();
+}
+
+async function delEvReg(id){
+  if(!confirm('Delete this event registration?'))return;
+  await fbDel('evRegs', id);
+  showEvRegs();
+  showSyncStatus('Registration deleted 🔄');
+}
+
+async function addManualAttendee(){
+  const evId=document.getElementById('man-ev-sel').value;
+  const name=document.getElementById('man-name').value.trim();
+  const sex=document.getElementById('man-sex').value;
+  const contact=document.getElementById('man-contact').value.trim();
+  const wa=document.getElementById('man-wa').value.trim();
+  const addr=document.getElementById('man-addr').value.trim();
+  const email=document.getElementById('man-email').value.trim();
+  const bt=document.getElementById('man-bt').value;
+  const nic=document.getElementById('man-nic').value.trim();
+  const notes=document.getElementById('man-notes').value.trim();
+  if(!evId){alert('Please select an event');return;}
+  if(!name){alert('Please enter the attendee name');return;}
+  if(!contact){alert('Please enter a phone number');return;}
+
+  const manEntry={evId,name,sex,contact,whatsapp:wa,address:addr,email,bloodType:bt,nic,isDonor:false,manual:true,notes,regAt:new Date().toISOString(),createdAt:new Date().toISOString()};
+  try{
+    await fbAdd('evRegs', manEntry);
+    showSyncStatus('Attendee added & synced! 🔄');
+  }catch(e){
+    const regs=get('evRegs');
+    regs.push({...manEntry,id:Date.now().toString()});
+    set('evRegs',regs);
+  }
+
+  // Clear fields
+  ['man-name','man-contact','man-wa','man-addr','man-email','man-nic','man-notes'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value='';
+  });
+  ['man-sex','man-bt'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+
+  // Auto WhatsApp invite
+  const s=getS();
+  const waLink=s.wa||'';
+  const waNum=(wa||contact).replace(/\s/g,'');
+  let inviteNum=waNum;
+  if(inviteNum&&!inviteNum.startsWith('+')&&!inviteNum.startsWith('00')){
+    inviteNum=(s.prefix||'+94')+inviteNum.replace(/^0/,'');
+  }
+
+  // Build WhatsApp invite message
+  const inviteMsg=encodeURIComponent(`Hello ${name}! 🩸 You have been registered for a Life Flow Blood Donation event by 98 Friends. Please join our WhatsApp group for updates: ${waLink}`);
+  const waDirectLink=inviteNum?`https://wa.me/${inviteNum.replace(/\+/,'')}?text=${inviteMsg}`:'';
+
+  if(waDirectLink){
+    const doInvite=confirm(`✅ ${name} has been added!\n\nWould you like to send them a WhatsApp invitation to join the group?\n\n(This will open WhatsApp with a pre-written message)`);
+    if(doInvite) window.open(waDirectLink,'_blank');
+  } else {
+    alert('✅ Manual attendee added! (No WhatsApp number provided, so no invite sent.)');
+  }
+
+  showEvRegs();
+}
+
+// ── UPCOMING EVENTS ──
+let evGifts=[];
+function addEvGift(){const v=document.getElementById('ev-gift-in').value.trim();if(!v)return;evGifts.push(v);document.getElementById('ev-gift-in').value='';renderEvGifts();}
+function removeEvGift(i){evGifts.splice(i,1);renderEvGifts();}
+function renderEvGifts(){document.getElementById('ev-gifts-al').innerHTML=evGifts.map((g,i)=>`<div class="gift-ai">🎁 ${esc(g)} <span class="gift-rm" onclick="removeEvGift(${i})">✕</span></div>`).join('');}
+
+async function addEvent(){
+  const title=document.getElementById('ev-t').value.trim();
+  const date=document.getElementById('ev-d').value;
+  const time=document.getElementById('ev-tm').value;
+  const loc=document.getElementById('ev-loc').value.trim();
+  const desc=document.getElementById('ev-desc').value.trim();
+  if(!title){alert('Enter event title');return;}
+  const evData={title,date,time,location:loc,description:desc,gifts:[...evGifts],createdAt:new Date().toISOString()};
+  try{
+    await fbAdd('upcomingEvents', evData);
+    showSyncStatus('Event added & synced! 🔄');
+  }catch(e){
+    const evs=get('upcomingEvents');
+    evs.push({...evData,id:Date.now().toString()});
+    set('upcomingEvents',evs);
+    renderAdminEvents();
+  }
+  evGifts=[];
+  ['ev-t','ev-d','ev-tm','ev-loc','ev-desc'].forEach(id=>document.getElementById(id).value='');
+  renderEvGifts(); alert('✅ Event added!');
+}
+
+function renderAdminEvents(){
+  const evs=get('upcomingEvents');
+  document.getElementById('adm-ev-list').innerHTML=evs.length?evs.map(ev=>`
+    <div style="background:var(--bg3);border-radius:10px;padding:14px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:9px;border:1px solid var(--cb);">
+      <div><div style="font-weight:700;">${esc(ev.title)}</div><div style="font-size:.8rem;color:var(--txt3);">${ev.date||'TBD'} · ${ev.location||'TBD'}</div>${ev.gifts&&ev.gifts.length?`<div style="display:flex;gap:5px;margin-top:5px;flex-wrap:wrap;">${ev.gifts.map(g=>`<span class="gtag" style="font-size:.68rem;">🎁 ${esc(g)}</span>`).join('')}</div>`:''}</div>
+      <button class="btn btn-d btn-sm" onclick="delEv('${ev.id}')">Delete</button>
+    </div>`).join(''):'<p style="color:var(--txt3);">No upcoming events. Add one above.</p>';
+}
+
+async function delEv(id){
+  if(!confirm('Delete this event?'))return;
+  await fbDel('upcomingEvents', id);
+  renderAdminEvents();
+  showSyncStatus('Event deleted 🔄');
+}
+
+// ── PAST EVENTS ──
+let peGifts=[];
+function addPEGift(){const v=document.getElementById('pe-gift-in').value.trim();if(!v)return;peGifts.push(v);document.getElementById('pe-gift-in').value='';renderPEGifts();}
+function removePEGift(i){peGifts.splice(i,1);renderPEGifts();}
+function renderPEGifts(){document.getElementById('pe-gifts-al').innerHTML=peGifts.map((g,i)=>`<div class="gift-ai">🎁 ${esc(g)} <span class="gift-rm" onclick="removePEGift(${i})">✕</span></div>`).join('');}
+
+async function addPastEvent(){
+  const title=document.getElementById('pe-t').value.trim();
+  const date=document.getElementById('pe-d').value;
+  const year=document.getElementById('pe-yr').value;
+  const donors=document.getElementById('pe-don').value;
+  const blood=document.getElementById('pe-blood').value;
+  const desc=document.getElementById('pe-desc').value.trim();
+  if(!title){alert('Enter event title');return;}
+  const peData={title,date,year:year||null,donorsCount:donors,bloodCollected:blood,description:desc,gifts:[...peGifts],memories:[],createdAt:new Date().toISOString()};
+  try{
+    await fbAdd('pastEvents', peData);
+    showSyncStatus('Past event saved & synced! 🔄');
+  }catch(e){
+    const evs=get('pastEvents');
+    evs.unshift({...peData,id:Date.now().toString()});
+    set('pastEvents',evs);
+    renderAdminPast(); updateMemEvSel();
+  }
+  peGifts=[];
+  ['pe-t','pe-d','pe-yr','pe-don','pe-blood','pe-desc'].forEach(id=>document.getElementById(id).value='');
+  renderPEGifts(); alert('✅ Past event saved!');
+}
+
+function renderAdminPast(){
+  const evs=get('pastEvents');
+  document.getElementById('adm-pe-list').innerHTML=evs.length?evs.map(ev=>`
+    <div style="background:var(--bg3);border-radius:10px;padding:14px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:9px;border:1px solid var(--cb);">
+      <div>
+        <div style="font-weight:700;">${esc(ev.title)}</div>
+        <div style="font-size:.8rem;color:var(--txt3);">${ev.date||ev.year||'TBD'} · ${ev.donorsCount||0} donors · ${ev.bloodCollected||0} units · ${(ev.memories||[]).length} memories</div>
+      </div>
+      <button class="btn btn-d btn-sm" onclick="delPE('${ev.id}')">Delete</button>
+    </div>`).join(''):'<p style="color:var(--txt3);">No past events recorded.</p>';
+}
+
+async function delPE(id){
+  if(!confirm('Delete?'))return;
+  await fbDel('pastEvents', id);
+  renderAdminPast(); updateMemEvSel();
+  showSyncStatus('Past event deleted 🔄');
+}
+
+// ── MEMORIES ──
+function updateMemEvSel(){
+  const sel=document.getElementById('mem-ev-sel');if(!sel)return;
+  const evs=get('pastEvents');
+  sel.innerHTML=evs.length?evs.map(e=>`<option value="${e.id}">${esc(e.title)} (${e.date||e.year||'TBD'})</option>`):'<option value="">No past events yet</option>';
+}
+
+function prevMemFiles(){
+  const files=document.getElementById('mem-files').files;
+  const p=document.getElementById('mem-prev');p.innerHTML='';
+  Array.from(files).forEach(f=>{
+    const url=URL.createObjectURL(f);
+    const el=f.type.startsWith('video')?document.createElement('video'):document.createElement('img');
+    el.src=url; el.style.cssText='width:72px;height:72px;object-fit:cover;border-radius:8px;';
+    p.appendChild(el);
+  });
+}
+
+async function uploadMems(){
+  const files=document.getElementById('mem-files').files;
+  const evId=document.getElementById('mem-ev-sel').value;
+  if(!evId){alert('Select a past event first');return;}
+  if(!files.length){alert('Select at least one file');return;}
+  const evs=get('pastEvents');
+  const ev=evs.find(e=>e.id===evId);if(!ev)return;
+  if(!ev.memories)ev.memories=[];
+  let done=0;
+  Array.from(files).forEach(f=>{
+    if(f.size>3*1024*1024){alert(f.name+' is too large (max 3MB). Skipping.');done++;if(done===files.length){set('pastEvents',evs);renderAdminMems();}return;}
+    const r=new FileReader();
+    r.onload=async e2=>{
+      ev.memories.push({data:e2.target.result,type:f.type,name:f.name,addedAt:new Date().toISOString()});
+      done++;
+      if(done===files.length){
+          try{
+            await fbUpd('pastEvents', ev.id, {memories: ev.memories});
+            showSyncStatus('Memories saved & synced! 🔄');
+          }catch(e){ set('pastEvents',evs); }
+          renderAdminMems();
+          document.getElementById('mem-prev').innerHTML='';
+          document.getElementById('mem-files').value='';
+          alert('✅ Memories saved!');
+        }
+    };
+    r.readAsDataURL(f);
+  });
+}
+
+function renderAdminMems(){
+  updateMemEvSel();
+  const evs=get('pastEvents');
+  document.getElementById('all-mems').innerHTML=evs.map(ev=>`
+    <div style="margin-bottom:18px;">
+      <div style="font-weight:700;color:var(--p);margin-bottom:9px;">${esc(ev.title)}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        ${(ev.memories||[]).map((m,mi)=>`
+          <div class="mem-wrap">
+            ${m.type&&m.type.startsWith('video')
+              ?`<video src="${m.data}" style="width:72px;height:72px;object-fit:cover;border-radius:8px;cursor:pointer;" onclick="openLB('video','${m.data}')" muted></video>`
+              :`<img src="${m.data}" style="width:72px;height:72px;object-fit:cover;border-radius:8px;cursor:pointer;" onclick="openLB('img','${m.data}')">`}
+            <button class="mem-del" onclick="delMemory('${ev.id}',${mi})" title="Delete memory">✕</button>
+          </div>`).join('')||'<span style="color:var(--txt3);font-size:.82rem;">No memories yet</span>'}
+      </div>
+    </div>`).join('')||'<p style="color:var(--txt3);">No past events</p>';
+}
+
+async function delMemory(evId, mi){
+  if(!confirm('Delete this memory photo/video?'))return;
+  const evs=get('pastEvents');
+  const ev=evs.find(e=>e.id===evId);if(!ev||!ev.memories)return;
+  ev.memories.splice(mi,1);
+  try{
+    await fbUpd('pastEvents', evId, {memories: ev.memories});
+    showSyncStatus('Memory deleted 🔄');
+  }catch(e){ set('pastEvents',evs); }
+  renderAdminMems();
+  renderPastEvents();
+}
+
+// ── COMMITTEE ──
+function prevOCPhoto(){
+  const f=document.getElementById('oc-photo').files[0];if(!f)return;
+  const r=new FileReader();r.onload=e=>{const p=document.getElementById('oc-ph-prev');p.src=e.target.result;p.style.display='block';};r.readAsDataURL(f);
+}
+
+async function addOCMember(){
+  const name=document.getElementById('oc-nm').value.trim();
+  const role=document.getElementById('oc-rl').value.trim();
+  const phone=document.getElementById('oc-ph').value.trim();
+  const email=document.getElementById('oc-em').value.trim();
+  const year=document.getElementById('oc-yr').value;
+  const bio=document.getElementById('oc-bio').value.trim();
+  const photoFile=document.getElementById('oc-photo').files[0];
+  if(!name){alert('Enter member name');return;}
+  async function save(photo=''){
+    const mData={name,role,phone,email,joinedYear:year,bio,photo,addedAt:new Date().toISOString(),createdAt:new Date().toISOString()};
+    try{
+      await fbAdd('ocMembers', mData);
+      showSyncStatus('OC Member added & synced! 🔄');
+    }catch(e){
+      const members=get('ocMembers');
+      members.push({...mData,id:Date.now().toString()});
+      set('ocMembers',members);
+    }
+    ['oc-nm','oc-rl','oc-ph','oc-em','oc-yr','oc-bio'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('oc-photo').value='';document.getElementById('oc-ph-prev').style.display='none';
+    renderAdminOC(); alert('✅ OC Member added!');
+  }
+  if(photoFile){if(photoFile.size>2*1024*1024){alert('Photo too large (max 2MB)');return;}const r=new FileReader();r.onload=e=>save(e.target.result);r.readAsDataURL(photoFile);}
+  else save();
+}
+
+function renderAdminOC(){
+  const members=get('ocMembers');
+  document.getElementById('adm-oc-list').innerHTML=members.map((m,i)=>`
+    <div style="background:var(--bg3);border-radius:var(--r);padding:14px;text-align:center;border:1px solid var(--cb);">
+      ${m.photo?`<img src="${m.photo}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--p);margin:0 auto 9px;display:block;">`:`<div style="width:64px;height:64px;border-radius:50%;background:var(--bg2);margin:0 auto 9px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;">👤</div>`}
+      <div style="font-weight:700;font-size:.86rem;">${esc(m.name)}</div>
+      <div style="font-size:.72rem;color:var(--p);margin-bottom:9px;">${esc(m.role||'Member')}</div>
+      <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-o btn-sm" style="font-size:.7rem;" onclick="openEditOC('${m.id}')">✏️ Edit</button>
+        <button class="btn btn-d btn-sm" style="font-size:.7rem;" onclick="delOC('${m.id}')">Remove</button>
+      </div>
+    </div>`).join('')||'<p style="color:var(--txt3);">No members yet</p>';
+}
+
+async function delOC(id){
+  if(!confirm('Remove member?'))return;
+  await fbDel('ocMembers', id);
+  renderAdminOC(); renderCommittee();
+  showSyncStatus('Member removed 🔄');
+}
+
+function openEditOC(id){
+  const m=get('ocMembers').find(x=>x.id===id);if(!m)return;
+  document.getElementById('oc-edit-id').value=id;
+  document.getElementById('oc-edit-nm').value=m.name||'';
+  document.getElementById('oc-edit-rl').value=m.role||'';
+  document.getElementById('oc-edit-ph').value=m.phone||'';
+  document.getElementById('oc-edit-em').value=m.email||'';
+  document.getElementById('oc-edit-yr').value=m.joinedYear||'';
+  document.getElementById('oc-edit-bio').value=m.bio||'';
+  document.getElementById('oc-edit-photo').value='';
+  const prev=document.getElementById('oc-edit-ph-prev');
+  if(m.photo){prev.src=m.photo;prev.style.display='block';}else prev.style.display='none';
+  openModal('oc-edit-ov');
+}
+
+async function saveEditOC(){
+  const id=document.getElementById('oc-edit-id').value;
+  const name=document.getElementById('oc-edit-nm').value.trim();
+  const role=document.getElementById('oc-edit-rl').value.trim();
+  const phone=document.getElementById('oc-edit-ph').value.trim();
+  const email=document.getElementById('oc-edit-em').value.trim();
+  const year=document.getElementById('oc-edit-yr').value;
+  const bio=document.getElementById('oc-edit-bio').value.trim();
+  const photoFile=document.getElementById('oc-edit-photo').files[0];
+  if(!name){alert('Name is required');return;}
+  const m=get('ocMembers').find(x=>x.id===id);
+  const currentPhoto=m?m.photo:'';
+  async function doSave(photo){
+    const updates={name,role,phone,email,joinedYear:year,bio,photo:photo||currentPhoto};
+    try{
+      await fbUpd('ocMembers',id,updates);
+      showSyncStatus('Member updated & synced! 🔄');
+    }catch(e){
+      const members=get('ocMembers');
+      const idx=members.findIndex(x=>x.id===id);
+      if(idx>=0) members[idx]={...members[idx],...updates};
+      set('ocMembers',members);
+    }
+    closeModal('oc-edit-ov');
+    renderAdminOC(); renderCommittee();
+    alert('✅ Member updated!');
+  }
+  if(photoFile){
+    if(photoFile.size>2*1024*1024){alert('Photo too large (max 2MB)');return;}
+    const r=new FileReader();r.onload=e=>doSave(e.target.result);r.readAsDataURL(photoFile);
+  }else doSave(currentPhoto);
+}
+
+function prevOCEditPhoto(){
+  const f=document.getElementById('oc-edit-photo').files[0];if(!f)return;
+  const r=new FileReader();r.onload=e=>{const p=document.getElementById('oc-edit-ph-prev');p.src=e.target.result;p.style.display='block';};r.readAsDataURL(f);
+}
+
+// ── BUDGET ──
+function initBudgetYears(){
+  const budget=get('budget',[]);
+  const years=[...new Set(budget.map(b=>b.year))].sort().reverse();
+  const cy=new Date().getFullYear().toString();
+  if(!years.includes(cy))years.unshift(cy);
+  const sel=document.getElementById('bud-yr-f');
+  sel.innerHTML=years.map(y=>`<option value="${y}">${y}</option>`).join('');
+}
+
+async function addBudget(){
+  const year=document.getElementById('bud-yr').value;
+  const type=document.getElementById('bud-type').value;
+  const desc=document.getElementById('bud-desc').value.trim();
+  const amt=parseFloat(document.getElementById('bud-amt').value);
+  if(!year||!desc||isNaN(amt)){alert('Fill all budget fields');return;}
+  const bEntry={year,type,desc,amount:amt,addedAt:new Date().toISOString(),createdAt:new Date().toISOString()};
+  try{
+    await fbAdd('budget', bEntry);
+    showSyncStatus('Budget entry saved! 🔄');
+  }catch(e){
+    const b=get('budget',[]);
+    b.push({...bEntry,id:Date.now().toString()});
+    set('budget',b);
+  }
+  initBudgetYears(); renderBudget();
+  ['bud-yr','bud-desc','bud-amt'].forEach(id=>document.getElementById(id).value='');
+}
+
+function renderBudget(){
+  const sel=document.getElementById('bud-yr-f');if(!sel)return;
+  const yr=sel.value;
+  const all=get('budget',[]).filter(b=>b.year===yr);
+  const inc=all.filter(b=>b.type==='income');
+  const exp=all.filter(b=>b.type==='expense');
+  const tI=inc.reduce((a,b)=>a+b.amount,0);
+  const tE=exp.reduce((a,b)=>a+b.amount,0);
+  const net=tI-tE;
+  const maxAmt=Math.max(tI,tE,1);
+  document.getElementById('bud-con').innerHTML=`
+    <!-- Summary Cards -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;">
+      <div style="background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(34,197,94,.04));border:1px solid rgba(34,197,94,.3);border-radius:12px;padding:14px;text-align:center;">
+        <div style="font-size:.68rem;font-weight:800;color:#22c55e;letter-spacing:.1em;text-transform:uppercase;">Total Income</div>
+        <div style="font-family:'Cinzel',serif;font-size:1.3rem;font-weight:900;color:#22c55e;margin-top:4px;">Rs. ${tI.toLocaleString()}</div>
+        <div style="height:3px;background:rgba(34,197,94,.2);border-radius:2px;margin-top:8px;overflow:hidden;"><div style="background:#22c55e;height:100%;width:${Math.round(tI/maxAmt*100)}%;border-radius:2px;"></div></div>
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(220,20,60,.12),rgba(220,20,60,.04));border:1px solid rgba(220,20,60,.3);border-radius:12px;padding:14px;text-align:center;">
+        <div style="font-size:.68rem;font-weight:800;color:#ff6666;letter-spacing:.1em;text-transform:uppercase;">Total Expenses</div>
+        <div style="font-family:'Cinzel',serif;font-size:1.3rem;font-weight:900;color:#ff6666;margin-top:4px;">Rs. ${tE.toLocaleString()}</div>
+        <div style="height:3px;background:rgba(220,20,60,.2);border-radius:2px;margin-top:8px;overflow:hidden;"><div style="background:#ef4444;height:100%;width:${Math.round(tE/maxAmt*100)}%;border-radius:2px;"></div></div>
+      </div>
+      <div style="background:linear-gradient(135deg,${net>=0?'rgba(34,197,94,.12),rgba(34,197,94,.04)':'rgba(220,20,60,.12),rgba(220,20,60,.04)'});border:1px solid ${net>=0?'rgba(34,197,94,.3)':'rgba(220,20,60,.3)'};border-radius:12px;padding:14px;text-align:center;">
+        <div style="font-size:.68rem;font-weight:800;color:${net>=0?'#22c55e':'#ff6666'};letter-spacing:.1em;text-transform:uppercase;">${net>=0?'Net Profit':'Net Loss'}</div>
+        <div style="font-family:'Cinzel',serif;font-size:1.3rem;font-weight:900;color:${net>=0?'#22c55e':'#ff6666'};margin-top:4px;">Rs. ${Math.abs(net).toLocaleString()}</div>
+        <div style="font-size:.68rem;color:var(--txt3);margin-top:6px;">${yr} Financial Summary</div>
+      </div>
+    </div>
+    <div class="ag2">
+      <div style="background:rgba(34,197,94,.04);border:1px solid rgba(34,197,94,.18);border-radius:10px;padding:16px;">
+        <div style="font-size:.74rem;font-weight:800;color:#22c55e;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px;"><span style="font-size:1rem;">💰</span> INCOME (${inc.length} entries)</div>
+        ${inc.map(b=>`<div class="bud-row"><span style="flex:1;font-size:.86rem;">${esc(b.desc)}</span><span style="font-family:'Cinzel',serif;color:#22c55e;min-width:110px;text-align:right;font-weight:700;">Rs. ${b.amount.toLocaleString()}</span><button onclick="delBudget('${b.id}')" style="background:rgba(220,20,60,.1);border:1px solid rgba(220,20,60,.2);color:var(--p);cursor:pointer;border-radius:6px;width:24px;height:24px;font-size:.75rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="Delete">✕</button></div>`).join('')||'<p style="color:var(--txt3);font-size:.82rem;text-align:center;padding:12px 0;">No income entries</p>'}
+        <div style="text-align:right;padding-top:10px;font-weight:800;color:#22c55e;border-top:1px dashed rgba(34,197,94,.25);margin-top:8px;">Total: Rs. ${tI.toLocaleString()}</div>
+      </div>
+      <div style="background:rgba(220,20,60,.04);border:1px solid rgba(220,20,60,.18);border-radius:10px;padding:16px;">
+        <div style="font-size:.74rem;font-weight:800;color:#ff6666;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px;"><span style="font-size:1rem;">💸</span> EXPENSES (${exp.length} entries)</div>
+        ${exp.map(b=>`<div class="bud-row"><span style="flex:1;font-size:.86rem;">${esc(b.desc)}</span><span style="font-family:'Cinzel',serif;color:#ff6666;min-width:110px;text-align:right;font-weight:700;">Rs. ${b.amount.toLocaleString()}</span><button onclick="delBudget('${b.id}')" style="background:rgba(220,20,60,.1);border:1px solid rgba(220,20,60,.2);color:var(--p);cursor:pointer;border-radius:6px;width:24px;height:24px;font-size:.75rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="Delete">✕</button></div>`).join('')||'<p style="color:var(--txt3);font-size:.82rem;text-align:center;padding:12px 0;">No expense entries</p>'}
+        <div style="text-align:right;padding-top:10px;font-weight:800;color:#ff6666;border-top:1px dashed rgba(220,20,60,.25);margin-top:8px;">Total: Rs. ${tE.toLocaleString()}</div>
+      </div>
+    </div>`;
+}
+
+async function delBudget(id){
+  await fbDel('budget', id);
+  renderBudget();
+}
+
+function expBudgetPDF(){
+  const {jsPDF}=window.jspdf; const doc=new jsPDF();
+  const yr=(document.getElementById('bud-yr-f')||{}).value||new Date().getFullYear();
+  doc.setFontSize(16); doc.setTextColor(220,20,60);
+  doc.text(`Life Flow — Annual Budget ${yr}`,14,18);
+  doc.setFontSize(9); doc.setTextColor(100,100,100);
+  doc.text('98 Friends | Sooriyawewa | Generated: '+new Date().toLocaleDateString(),14,26);
+  const all=get('budget',[]).filter(b=>b.year===String(yr));
+  doc.autoTable({startY:32,head:[['Type','Description','Amount (Rs.)']],
+    body:all.map(b=>[b.type.toUpperCase(),b.desc,b.amount.toLocaleString()]),
+    styles:{fontSize:9},headStyles:{fillColor:[220,20,60]}});
+  const tI=all.filter(b=>b.type==='income').reduce((a,b)=>a+b.amount,0);
+  const tE=all.filter(b=>b.type==='expense').reduce((a,b)=>a+b.amount,0);
+  const y2=doc.autoTable.previous.finalY+10;
+  doc.text(`Total Income: Rs. ${tI.toLocaleString()}`,14,y2);
+  doc.text(`Total Expenses: Rs. ${tE.toLocaleString()}`,14,y2+7);
+  doc.text(`Net: Rs. ${(tI-tE).toLocaleString()}`,14,y2+14);
+  doc.save('LifeFlow_Budget_'+yr+'.pdf');
+}
+
+function expBudgetXLSX(){
+  const yr=(document.getElementById('bud-yr-f')||{}).value||new Date().getFullYear();
+  const all=get('budget',[]).filter(b=>b.year===String(yr));
+  if(!all.length){alert('No budget entries for '+yr);return;}
+  const wb=XLSX.utils.book_new();
+  const inc=all.filter(b=>b.type==='income');
+  const exp=all.filter(b=>b.type==='expense');
+  const tI=inc.reduce((a,b)=>a+b.amount,0);
+  const tE=exp.reduce((a,b)=>a+b.amount,0);
+  const rows=[
+    ['Life Flow — Annual Budget '+yr,'',''],
+    ['98 Friends | Sooriyawewa | Generated: '+new Date().toLocaleDateString(),'',''],
+    ['','',''],
+    ['TYPE','DESCRIPTION','AMOUNT (Rs.)'],
+    ...inc.map(b=>['INCOME',b.desc,b.amount]),
+    ...exp.map(b=>['EXPENSE',b.desc,b.amount]),
+    ['','',''],
+    ['','Total Income',tI],
+    ['','Total Expenses',tE],
+    ['','Net',(tI-tE)]
+  ];
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:12},{wch:38},{wch:16}];
+  XLSX.utils.book_append_sheet(wb,ws,'Budget '+yr);
+  XLSX.writeFile(wb,'LifeFlow_Budget_'+yr+'.xlsx');
+}
+
+function expIncomeXLSX(){
+  const yr=(document.getElementById('bud-yr-f')||{}).value||new Date().getFullYear();
+  const inc=get('budget',[]).filter(b=>b.year===String(yr)&&b.type==='income');
+  if(!inc.length){alert('No income entries for '+yr);return;}
+  const wb=XLSX.utils.book_new();
+  const total=inc.reduce((a,b)=>a+b.amount,0);
+  const rows=[
+    ['Life Flow — Income Report '+yr,'',''],
+    ['98 Friends | Sooriyawewa | Generated: '+new Date().toLocaleDateString(),'',''],
+    ['','',''],
+    ['#','DESCRIPTION','AMOUNT (Rs.)'],
+    ...inc.map((b,i)=>[i+1,b.desc,b.amount]),
+    ['','',''],
+    ['','TOTAL INCOME',total]
+  ];
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:5},{wch:38},{wch:16}];
+  XLSX.utils.book_append_sheet(wb,ws,'Income '+yr);
+  XLSX.writeFile(wb,'LifeFlow_Income_'+yr+'.xlsx');
+}
+
+function expExpenseXLSX(){
+  const yr=(document.getElementById('bud-yr-f')||{}).value||new Date().getFullYear();
+  const exp=get('budget',[]).filter(b=>b.year===String(yr)&&b.type==='expense');
+  if(!exp.length){alert('No expense entries for '+yr);return;}
+  const wb=XLSX.utils.book_new();
+  const total=exp.reduce((a,b)=>a+b.amount,0);
+  const rows=[
+    ['Life Flow — Expenses Report '+yr,'',''],
+    ['98 Friends | Sooriyawewa | Generated: '+new Date().toLocaleDateString(),'',''],
+    ['','',''],
+    ['#','DESCRIPTION','AMOUNT (Rs.)'],
+    ...exp.map((b,i)=>[i+1,b.desc,b.amount]),
+    ['','',''],
+    ['','TOTAL EXPENSES',total]
+  ];
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:5},{wch:38},{wch:16}];
+  XLSX.utils.book_append_sheet(wb,ws,'Expenses '+yr);
+  XLSX.writeFile(wb,'LifeFlow_Expenses_'+yr+'.xlsx');
+}
+
+function expIncomePDF(){
+  const yr=(document.getElementById('bud-yr-f')||{}).value||new Date().getFullYear();
+  const inc=get('budget',[]).filter(b=>b.year===String(yr)&&b.type==='income');
+  if(!inc.length){alert('No income entries for '+yr);return;}
+  const{jsPDF}=window.jspdf; const doc=new jsPDF();
+  doc.setFillColor(34,139,34); doc.rect(0,0,210,28,'F');
+  doc.setTextColor(255,255,255); doc.setFontSize(16);
+  doc.text(`Life Flow — Income Report ${yr}`,14,15);
+  doc.setFontSize(9);
+  doc.text('98 Friends | Sooriyawewa | Generated: '+new Date().toLocaleDateString(),14,23);
+  doc.autoTable({startY:32,head:[['#','Description','Amount (Rs.)']],
+    body:inc.map((b,i)=>[i+1,b.desc,'Rs. '+b.amount.toLocaleString()]),
+    styles:{fontSize:9},headStyles:{fillColor:[34,139,34]}});
+  const total=inc.reduce((a,b)=>a+b.amount,0);
+  const y2=doc.autoTable.previous.finalY+12;
+  doc.setFontSize(12); doc.setTextColor(34,139,34);
+  doc.text(`Total Income: Rs. ${total.toLocaleString()}`,14,y2);
+  doc.save(`LifeFlow_Income_${yr}.pdf`);
+}
+
+function expExpensePDF(){
+  const yr=(document.getElementById('bud-yr-f')||{}).value||new Date().getFullYear();
+  const exp=get('budget',[]).filter(b=>b.year===String(yr)&&b.type==='expense');
+  if(!exp.length){alert('No expense entries for '+yr);return;}
+  const{jsPDF}=window.jspdf; const doc=new jsPDF();
+  doc.setFillColor(220,20,60); doc.rect(0,0,210,28,'F');
+  doc.setTextColor(255,255,255); doc.setFontSize(16);
+  doc.text(`Life Flow — Expenses Report ${yr}`,14,15);
+  doc.setFontSize(9);
+  doc.text('98 Friends | Sooriyawewa | Generated: '+new Date().toLocaleDateString(),14,23);
+  doc.autoTable({startY:32,head:[['#','Description','Amount (Rs.)']],
+    body:exp.map((b,i)=>[i+1,b.desc,'Rs. '+b.amount.toLocaleString()]),
+    styles:{fontSize:9},headStyles:{fillColor:[220,20,60]}});
+  const total=exp.reduce((a,b)=>a+b.amount,0);
+  const y2=doc.autoTable.previous.finalY+12;
+  doc.setFontSize(12); doc.setTextColor(220,20,60);
+  doc.text(`Total Expenses: Rs. ${total.toLocaleString()}`,14,y2);
+  doc.save(`LifeFlow_Expenses_${yr}.pdf`);
+}
+
+function sendViaWhatsApp(){
+  const msg=(document.getElementById('sms-msg')||{}).value||'';
+  if(!msg.trim()){alert('Compose a message first');return;}
+  const encoded=encodeURIComponent(msg);
+  const s=getS();
+  if(s.wa&&s.wa.includes('chat.whatsapp.com')){
+    // Open group link + message hint
+    alert('1️⃣ Opening WhatsApp group link...\n2️⃣ Copy your message from the message box\n3️⃣ Paste it in WhatsApp and send!');
+    navigator.clipboard.writeText(msg).catch(()=>{});
+    window.open(s.wa,'_blank');
+  }else{
+    // Open WhatsApp with pre-filled message (personal chat, then forward to group)
+    window.open('https://wa.me/?text='+encoded,'_blank');
+  }
+  logSMS(msg,1,'whatsapp');
+}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║  SMS — TEXTBEE REAL INTEGRATION                       ║
+// ╚══════════════════════════════════════════════════════╝
+let smsTabMode='event';
+function smsTab(mode, el){
+  smsTabMode=mode;
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  const evs=get('upcomingEvents');
+  const msgs={
+    event:evs.length?`Dear Donor,\n\nLife Flow blood donation event is coming!\n\nEvent: ${evs[0].title}\nDate: ${evs[0].date||'TBD'}\nVenue: ${evs[0].location||'Sooriyawewa'}\n\nYour donation saves lives. We count on you!\n\n— 98 Friends | Life Flow\n📞 0772628991`:'Add an upcoming event first.',
+    thank:`Dear Valued Donor,\n\nThank you sincerely for participating in Life Flow's blood donation drive.\n\nYour generous contribution directly saves precious lives in our community. You are a true hero!\n\nWith gratitude,\n98 Friends | Life Flow\n📞 0772628991`,
+    custom:''
+  };
+  document.getElementById('sms-msg').value=msgs[mode];
+  updateSMSChar();
+}
+
+document.addEventListener('input',e=>{if(e.target.id==='sms-msg')updateSMSChar();});
+function updateSMSChar(){
+  const msg=(document.getElementById('sms-msg')||{}).value||'';
+  const el=document.getElementById('sms-char');
+  if(el)el.textContent=`Characters: ${msg.length} / 160 ${msg.length>160?`(${Math.ceil(msg.length/160)} SMS)`:''}`;
+}
+
+async function sendSMSAll(){
+  const msg=document.getElementById('sms-msg').value.trim();
+  if(!msg){alert('Compose a message first');return;}
+  const donors=get('donors');
+  if(!donors.length){alert('No donors registered');return;}
+
+  const s=getS();
+  const numbers=donors.map(d=>{
+    let n=(d.contactNumber||d.whatsappNumber||'').replace(/\s/g,'');
+    if(n&&!n.startsWith('+')&&!n.startsWith('00')){
+      n=(s.prefix||'+94')+n.replace(/^0/,'');
+    }
+    return n;
+  }).filter(Boolean);
+
+  if(!s.apiKey||!s.devId){
+    // Fallback: copy to clipboard
+    navigator.clipboard.writeText(numbers.join('\n')).catch(()=>{});
+    alert(`TextBee not configured.\n\nNumbers copied to clipboard (${numbers.length} donors).\n\nTo send real SMS: configure API Key and Device ID in Settings.`);
+    logSMS(msg,numbers.length,'copied');
+    return;
+  }
+
+  // REAL TextBee SMS
+  const prog=document.getElementById('sms-prog');
+  const progFill=document.getElementById('sms-prog-fill');
+  const progTxt=document.getElementById('sms-prog-txt');
+  const progRes=document.getElementById('sms-prog-res');
+  prog.style.display='block'; progFill.style.width='0%';
+  progTxt.textContent='Sending SMS via TextBee...';
+
+  let sent=0, failed=0;
+  const batchSize=10; // TextBee supports batch
+
+  // Split into batches
+  for(let i=0;i<numbers.length;i+=batchSize){
+    const batch=numbers.slice(i,i+batchSize);
+    try{
+      const resp=await fetch(`https://api.textbee.dev/api/v1/gateway/devices/${s.devId}/sendSms`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':s.apiKey},
+        body:JSON.stringify({receivers:batch,message:msg})
+      });
+      if(resp.ok){sent+=batch.length;}
+      else{failed+=batch.length;}
+    }catch(err){
+      // CORS issue or network error - try one by one
+      for(const num of batch){
+        try{
+          const r=await fetch(`https://api.textbee.dev/api/v1/gateway/devices/${s.devId}/sendSms`,{
+            method:'POST',
+            headers:{'Content-Type':'application/json','x-api-key':s.apiKey},
+            body:JSON.stringify({receivers:[num],message:msg})
+          });
+          if(r.ok)sent++;else failed++;
+        }catch{failed++;}
+      }
+    }
+    const pct=Math.round((i+batch.length)/numbers.length*100);
+    progFill.style.width=pct+'%';
+    progTxt.textContent=`Sending... ${Math.min(i+batchSize,numbers.length)}/${numbers.length}`;
+    progRes.textContent=`✅ Sent: ${sent} | ❌ Failed: ${failed}`;
+    await new Promise(r=>setTimeout(r,300));
+  }
+
+  progTxt.textContent=`✅ Done! Sent: ${sent} | Failed: ${failed}`;
+  logSMS(msg,sent,'sent');
+  renderSMS();
+  setTimeout(()=>{prog.style.display='none';},5000);
+}
+
+async function testSMS(){
+  const s=getS();
+  const testNum=document.getElementById('s-test-num').value.trim();
+  if(!s.apiKey||!s.devId){alert('Configure API Key and Device ID first');return;}
+  if(!testNum){alert('Enter a test phone number');return;}
+  let n=testNum.replace(/\s/g,'');
+  if(!n.startsWith('+')&&!n.startsWith('00'))n=(s.prefix||'+94')+n.replace(/^0/,'');
+  try{
+    const resp=await fetch(`https://api.textbee.dev/api/v1/gateway/devices/${s.devId}/sendSms`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':s.apiKey},
+      body:JSON.stringify({receivers:[n],message:'Life Flow SMS test! TextBee is working. — 98 Friends'})
+    });
+    if(resp.ok)alert('✅ Test SMS sent to '+n+'!');
+    else alert('❌ Failed: '+resp.status+' '+resp.statusText);
+  }catch(err){alert('❌ Error: '+err.message+'\n\nNote: CORS may block browser calls. Try from a hosted server or use the TextBee dashboard to verify.');}
+}
+
+async function logSMS(msg,count,status){
+  const entry={msg,recipients:count,status,sentAt:new Date().toISOString(),createdAt:new Date().toISOString()};
+  try{
+    await fbAdd('smsLog', entry);
+  }catch(e){
+    const log=get('smsLog',[]);
+    log.unshift({...entry,id:Date.now().toString()});
+    set('smsLog',log);
+  }
+}
+
+function copyNums(){
+  const donors=get('donors');
+  const nums=donors.map(d=>d.contactNumber).join('\n');
+  navigator.clipboard.writeText(nums).then(()=>alert('All '+donors.length+' numbers copied!')).catch(()=>{});
+}
+
+function renderSMS(){
+  const log=get('smsLog',[]);
+  const donors=get('donors');
+  document.getElementById('sms-log').innerHTML=log.length?log.map(l=>`
+    <div class="sm-log-row">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-weight:700;font-size:.84rem;">Sent to ${l.recipients} donors <span class="bdg ${l.status==='sent'?'bdg-g':'bdg-y'}">${l.status}</span></span>
+        <span style="font-size:.74rem;color:var(--txt3);">${fmtD(l.sentAt)}</span>
+      </div>
+      <div style="font-size:.78rem;color:var(--txt3);white-space:pre-wrap;">${esc(l.msg.substring(0,80))}${l.msg.length>80?'...':''}</div>
+    </div>`).join(''):'<p style="color:var(--txt3);">No SMS sent yet</p>';
+  document.getElementById('ph-list').innerHTML=donors.length?donors.map(d=>`<span style="display:inline-block;background:var(--bg3);border-radius:6px;padding:3px 9px;margin:3px;font-size:.8rem;">${esc(d.fullName)} · <strong>${esc(d.contactNumber)}</strong></span>`).join(''):'<p style="color:var(--txt3);">No donors registered</p>';
+}
+
+// ── SETTINGS ──
+function loadSettings(){
+  const s=getS();
+  document.getElementById('s-wa').value=s.wa||'';
+  document.getElementById('s-lives').value=s.lives||0;
+  document.getElementById('s-apikey').value=s.apiKey||'';
+  document.getElementById('s-devid').value=s.devId||'';
+  document.getElementById('s-prefix').value=s.prefix||'+94';
+  document.getElementById('s-test-num').value=s.testNum||'';
+  document.getElementById('s-orgname').value=s.orgName||'98 Friends';
+  document.getElementById('s-phone').value=s.contactPhone||'0772628991';
+  document.getElementById('s-email').value=s.contactEmail||'mudushkasuraj1982@gmail.com';
+  document.getElementById('s-city').value=s.city||'Sooriyawewa, Sri Lanka';
+}
+
+async function saveSettings(){
+  const s=getS();
+  s.wa=document.getElementById('s-wa').value.trim();
+  s.lives=parseInt(document.getElementById('s-lives').value)||0;
+  s.apiKey=document.getElementById('s-apikey').value.trim();
+  s.devId=document.getElementById('s-devid').value.trim();
+  s.prefix=document.getElementById('s-prefix').value.trim()||'+94';
+  s.testNum=document.getElementById('s-test-num').value.trim();
+  s.orgName=document.getElementById('s-orgname').value.trim()||'98 Friends';
+  s.contactPhone=document.getElementById('s-phone').value.trim()||'0772628991';
+  s.contactEmail=document.getElementById('s-email').value.trim()||'mudushkasuraj1982@gmail.com';
+  s.city=document.getElementById('s-city').value.trim()||'Sooriyawewa, Sri Lanka';
+  await setS(s);
+  updateStats();
+  document.querySelectorAll('.ct-vl[data-live="phone"]').forEach(el=>el.textContent=s.contactPhone);
+  document.querySelectorAll('.ct-vl[data-live="email"]').forEach(el=>el.textContent=s.contactEmail);
+  showSyncStatus('Settings saved & synced! 🔄');
+  alert('✅ Settings saved successfully!');
+}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║  ADMIN PROFILE                                        ║
+// ╚══════════════════════════════════════════════════════╝
+let _pendingProfPhoto = null; // base64 string for new profile photo
+
+function prevAdminPhoto(){
+  const f = document.getElementById('prof-photo-inp').files[0];
+  if(!f) return;
+  if(f.size > 2*1024*1024){ alert('Photo too large (max 2MB)'); return; }
+  const r = new FileReader();
+  r.onload = e => {
+    _pendingProfPhoto = e.target.result;
+    const img = document.getElementById('prof-avatar-img');
+    const ph  = document.getElementById('prof-avatar-ph');
+    img.src = _pendingProfPhoto; img.style.display='block'; ph.style.display='none';
+  };
+  r.readAsDataURL(f);
+}
+
+function clearAdminPhoto(){
+  _pendingProfPhoto = 'REMOVE';
+  document.getElementById('prof-avatar-img').style.display='none';
+  document.getElementById('prof-avatar-ph').style.display='flex';
+  document.getElementById('prof-photo-inp').value='';
+}
+
+async function saveAdminProfile(){
+  const name  = document.getElementById('prof-name').value.trim();
+  const email = document.getElementById('prof-email').value.trim();
+  const phone = document.getElementById('prof-phone').value.trim();
+  const role  = document.getElementById('prof-role').value.trim();
+  const msg   = document.getElementById('prof-msg');
+  const s = getS();
+  s.adminProfile = s.adminProfile || {};
+  if(name)  s.adminProfile.name  = name;
+  if(email) s.adminProfile.email = email;
+  if(phone) s.adminProfile.phone = phone;
+  if(role)  s.adminProfile.role  = role;
+  if(_pendingProfPhoto === 'REMOVE'){
+    s.adminProfile.photo = '';
+    _pendingProfPhoto = null;
+  } else if(_pendingProfPhoto){
+    s.adminProfile.photo = _pendingProfPhoto;
+    _pendingProfPhoto = null;
+  }
+  await setS(s);
+  updateAdminHeader();
+  msg.style.display='block'; msg.style.color='#60C060';
+  msg.textContent='✅ Profile saved successfully!';
+  setTimeout(()=>{ msg.style.display='none'; }, 3000);
+  showSyncStatus('Admin profile saved! 🔄');
+}
+
+function loadAdminProfile(){
+  const s = getS();
+  const p = s.adminProfile || {};
+  if(p.name)  document.getElementById('prof-name').value  = p.name;
+  if(p.email) document.getElementById('prof-email').value = p.email;
+  if(p.phone) document.getElementById('prof-phone').value = p.phone;
+  if(p.role)  document.getElementById('prof-role').value  = p.role;
+  if(p.photo){
+    const img = document.getElementById('prof-avatar-img');
+    const ph  = document.getElementById('prof-avatar-ph');
+    img.src = p.photo; img.style.display='block'; ph.style.display='none';
+  }
+  updateAdminHeader();
+}
+
+function updateAdminHeader(){
+  const s = getS();
+  const p = s.adminProfile || {};
+  const hdrAvatar = document.getElementById('adm-hdr-avatar');
+  const hdrName   = document.getElementById('adm-hdr-name');
+  if(hdrName) hdrName.textContent = p.name || 'Admin';
+  if(hdrAvatar){
+    if(p.photo){
+      hdrAvatar.innerHTML = `<img src="${p.photo}" style="width:38px;height:38px;object-fit:cover;border-radius:50%;">`;
+    } else {
+      hdrAvatar.innerHTML = '👤';
+    }
+  }
+}
+
+// ── CHANGE PASSWORD ──
+function changePassword(){
+  const cur=document.getElementById('s-cur-pw').value;
+  const nw=document.getElementById('s-new-pw').value;
+  const cn=document.getElementById('s-con-pw').value;
+  const msg=document.getElementById('pw-msg');
+  const s=getS();
+  const currentPw=s.adminPassword||ADM_PASS;
+
+  if(cur!==currentPw){
+    msg.style.display='block';msg.style.color='#ff4444';
+    msg.textContent='❌ Current password is incorrect.';return;
+  }
+  if(nw.length<6){
+    msg.style.display='block';msg.style.color='#ff4444';
+    msg.textContent='❌ New password must be at least 6 characters.';return;
+  }
+  if(nw!==cn){
+    msg.style.display='block';msg.style.color='#ff4444';
+    msg.textContent='❌ New passwords do not match.';return;
+  }
+  s.adminPassword=nw;
+  setS(s);
+  // Update runtime password
+  window._runtimeAdminPass=nw;
+  document.getElementById('s-cur-pw').value='';
+  document.getElementById('s-new-pw').value='';
+  document.getElementById('s-con-pw').value='';
+  msg.style.display='block';msg.style.color='#60C060';
+  msg.textContent='✅ Password changed successfully! Use your new password next time.';
+}
+
+function exportAll(){
+  const data={donors:get('donors'),upcomingEvents:get('upcomingEvents'),pastEvents:get('pastEvents'),ocMembers:get('ocMembers'),budget:get('budget',[]),comments:get('comments'),evRegs:get('evRegs'),smsLog:get('smsLog',[]),settings:getS(),exportedAt:new Date().toISOString()};
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.download='LifeFlow_Backup_'+new Date().toISOString().slice(0,10)+'.json';a.click();
+}
+function importTrigger(){document.getElementById('imp-file').click();}
+function handleImport(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      const d=JSON.parse(ev.target.result);
+      if(!confirm('Replace all current data with imported data?'))return;
+      if(d.donors)set('donors',d.donors);
+      if(d.upcomingEvents)set('upcomingEvents',d.upcomingEvents);
+      if(d.pastEvents)set('pastEvents',d.pastEvents);
+      if(d.ocMembers)set('ocMembers',d.ocMembers);
+      if(d.budget)set('budget',d.budget);
+      if(d.comments)set('comments',d.comments);
+      if(d.evRegs)set('evRegs',d.evRegs);
+      if(d.smsLog)set('smsLog',d.smsLog);
+      if(d.settings)setS(d.settings);
+      alert('Data imported!');
+      renderAdminDash();
+    }catch{alert('Invalid JSON file');}
+  };
+  r.readAsText(f);
+}
+function resetAll(){
+  if(!confirm('⚠️ Reset ALL data permanently?'))return;
+  if(prompt('Type RESET to confirm:')!=='RESET')return;
+  ['donors','upcomingEvents','pastEvents','ocMembers','budget','comments','evRegs','smsLog','settings'].forEach(k=>localStorage.removeItem(K(k)));
+  alert('All data reset!');
+  renderAdminDash();
+}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║  UTILITIES                                            ║
+// ╚══════════════════════════════════════════════════════╝
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmtD(iso){if(!iso)return '';try{return new Date(iso).toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'numeric'});}catch{return iso;}}
+
+// ── MOBILE MENU ──
+function toggleMobMenu(){
+  const ham=document.getElementById('ham');
+  const menu=document.getElementById('mob-menu');
+  ham.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+function closeMobMenu(){
+  document.getElementById('ham').classList.remove('open');
+  document.getElementById('mob-menu').classList.remove('open');
+}
+// Close mobile menu on scroll
+window.addEventListener('scroll',()=>{closeMobMenu();},{ passive:true });
+
+// ╔══════════════════════════════════════════════════════╗
+// ║  RENDER ALL PUBLIC                                    ║
+// ╚══════════════════════════════════════════════════════╝
+function renderAll(){
+  renderEvents();
+  renderPastEvents();
+  renderCommittee();
+  renderComments();
+  updateStats();
+  applyTR();
+}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║  INIT                                                 ║
+// ╚══════════════════════════════════════════════════════╝
+window.addEventListener('load',()=>{
+  // Set today's date as default
+  const rd=document.getElementById('reg-date');
+  if(rd) rd.value=new Date().toISOString().split('T')[0];
+
+  // Hide loading
+  setTimeout(()=>{
+    const ls=document.getElementById('ls');
+    ls.classList.add('fo');
+    setTimeout(()=>ls.style.display='none',500);
+  },2400);
+
+  initThreeJS();
+  initParticles();
+  initReveal();
+  initNavActive();
+
+  // Modal overlay click to close
+  document.querySelectorAll('.ov').forEach(m=>{
+    m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});
+  });
+
+  // Admin password enter key
+  document.getElementById('adm-pw').addEventListener('keypress',e=>{if(e.key==='Enter')adminLogin();});
+
+  // SMS char counter
+  document.getElementById('sms-msg').addEventListener('input',updateSMSChar);
+
+  // Start Firebase listeners when ready, else fallback render
+  if(window._fbReady){
+    initFirebaseListeners();
+    renderAll();
+  } else {
+    document.addEventListener('fb-ready',()=>{
+      initFirebaseListeners();
+      renderAll();
+    });
+    // Immediate render from cache (may be empty first load)
+    setTimeout(renderAll, 300);
+  }
+});
+</script>
+</body>
+</html>
